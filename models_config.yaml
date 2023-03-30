@@ -1,0 +1,25 @@
+amazon_product:
+  class_name: Product
+  columns:
+    pid: db.Integer, primary_key=True
+    category: db.String(30)
+    brand: db.String(30)
+    color: db.String(30)
+    quality: db.Float
+    price: db.Float
+  relationships:
+    reviews:
+      model: Review
+      options: 'back_populates="product"'
+
+amazon_review:
+  class_name: Review
+  columns:
+    pid: db.Integer, db.ForeignKey('amazon_product.pid')
+    review_id: db.Integer, primary_key=True
+    rating: db.Integer
+    sentiment: db.Float
+  relationships:
+    product:
+      model: Product
+      options: 'back_populates="reviews"'

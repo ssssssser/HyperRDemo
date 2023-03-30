@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+
+
+<head>
+<style type="text/css" media="screen">
+
+    #editor_USE { 
+        position: relative;
+        height:120px;
+        width: 400px
+    }
+
+    #editor_WHEN { 
+        position: relative;
+        height:50px;
+        width: 400px
+    }
+
+    #editor_FOR { 
+        position: relative;
+        height:50px;
+        width: 400px
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        grid-gap: 10px;
+        width: 510px;
+        border-style: dotted;
+        border-width: 1px
+    }
+
+
+    .span-col-4{grid-column: span 4 / auto;}
+
+    .span-col-5{grid-column: span 5 / auto;}
+
+    .span-col-3{grid-column: span 3 / auto;}
+
+    .span-row-2{grid-row: span 2 / auto;}
+/* 
+.item1 { grid-area: use; }
+.item2 { grid-area: when; }
+.item3 { grid-area: update; }
+.item4 { grid-area: output; }
+.item5 { grid-area: for; }
+
+.grid-container {
+  display: grid;
+  grid-template-areas:
+    'use use use use use use'
+    'when when when when when when'
+    'update update update update update update'
+    'output output output output output output'
+    'for for for for for for';
+  gap: 10px;
+  background-color: #2196F3;
+  padding: 10px;
+}
+
+.grid-container > div {
+  background-color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  padding: 20px 0;
+  font-size: 30px;
+}
+*/
+
+/* CSS */
+.button-4 {
+  appearance: none;
+  background-color: #FAFBFC;
+  border: 1px solid rgba(27, 31, 35, 0.15);
+  border-radius: 6px;
+  box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0, rgba(255, 255, 255, 0.25) 0 1px 0 inset;
+  box-sizing: border-box;
+  color: #24292E;
+  cursor: pointer;
+  display: inline-block;
+  font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  list-style: none;
+  padding: 6px 16px;
+  position: relative;
+  transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+  white-space: nowrap;
+  word-wrap: break-word;
+  /* grid-row: span 2 / auto; */
+}
+
+.button-4:hover {
+  background-color: #F3F4F6;
+  text-decoration: none;
+  transition-duration: 0.1s;
+}
+
+.button-4:disabled {
+  background-color: #FAFBFC;
+  border-color: rgba(27, 31, 35, 0.15);
+  color: #959DA5;
+  cursor: default;
+}
+
+.button-4:active {
+  background-color: #EDEFF2;
+  box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 inset;
+  transition: none 0s;
+}
+
+.button-4:focus {
+  outline: 1px transparent;
+}
+
+.button-4:before {
+  display: none;
+}
+
+.button-4:-webkit-details-marker {
+  display: none;
+}
+
+
+
+</style>
+
+
+<script src="https://pagecdn.io/lib/ace/1.4.5/ace.js" integrity="sha256-5Xkhn3k/1rbXB+Q/DX/2RuAtaB4dRRyQvMs83prFjpM=" crossorigin="anonymous"></script>
+
+
+</head>
+
+
+
+
+<body>
+
+
+<h1>Query Grid</h1>
+
+<!-- <p>This grid layout contains six columns and three rows:</p> -->
+
+<!-- <div class="grid-container">
+  <div class="item1">USE</div>
+  <div class="item2">WHEN</div>
+  <div class="item3">UPDATE</div>  
+  <div class="item4">OUTPUT</div>
+  <div class="item5">FOR</div>
+</div> -->
+
+
+<div class="grid">
+    <div class="span-row-2">
+        <button class="button-4" role="button" disabled style="color:#EDEFF2: #929090;">USE</button>
+    </div>
+    <div>
+        <select class="button-4" name="table" id="table-dropdown">
+            <option value="product">Product</option>
+            <option value="review">Review</option>
+            <option value="rel_view">RelevantView AS</option>
+        </select>
+    </div>
+    <div class="span-col-4">  </div>
+    <div class="span-col-5"> 
+        <div id="editor_USE">
+SELECT T1.PID, T1.Category, T1.Price, T1.Brand,
+AVG(Sentiment) AS Senti, AVG(T2.Rating) AS Rtng
+FROM Product AS T1, Review AS T2
+WHERE T1.PID = T2.PID
+GROUP BY T1.PID, T1.Category, T1.Price, T1.Brand
+        </div>
+                    
+        <script>
+            var editor_USE = ace.edit("editor_USE");
+            editor_USE.setTheme("ace/theme/xcode"); 
+            // cobalt, dawn, solarized_light, xcode
+            editor_USE.session.setMode("ace/mode/sql");
+        </script>
+    </div>
+    <div>
+        <button class="button-4" role="button">+ WHEN</button>
+    </div>
+    <div class="span-col-5">
+        <div id="editor_WHEN">
+Brand = 'Asus'
+        </div>
+                    
+        <script>
+            var editor_WHEN = ace.edit("editor_WHEN");
+            editor_WHEN.setTheme("ace/theme/xcode");
+            editor_WHEN.session.setMode("ace/mode/sql");
+        </script>
+    </div>
+    <div>
+        <button class="button-4" role="button" disabled style="color:#EDEFF2: #929090;">UPDATE</button>
+    </div>
+    <div class="span-col-5">
+        <select class="button-4" name="update_attribute" id="update_dropdown">
+            <option value="product">(Price)</option>
+            <option value="review">(Brand)</option>
+            <option value="rel_view">(Senti)</option>
+            <option value="rel_view">(Rtng)</option>
+        </select>
+        <div style="display: inline;"> = </div>
+        <div style="display: inline;">
+            <input class="button-4" type="number" id="update_const" name="update_const" size="4"
+            style="width: 100px;">
+        </div>
+        <div style="display: inline;">
+            <select class="button-4"  name="update_attribute" id="update_dropdown">
+                <option value="product">.</option>
+                <option value="review">+</option>
+                <option value="rel_view">x</option>
+            </select>
+        </div>
+        <div style="display: inline;">
+            <input class="button-4" type="text" id="update_attr2" name="update_attr2" value=" PRE(Price)" disabled
+            style="background-color: #d8d8d8; width: 120px">
+        </div>
+    </div>
+    
+    
+
+    <div>
+        <button class="button-4" role="button" disabled style="color:#EDEFF2: #929090;">OUTPUT</button>
+    </div>
+    <div>
+        <select class="button-4" name="output_aggr" id="output_aggr">
+            <option value="count">COUNT</option>
+            <option value="sum">SUM</option>
+            <option value="avg">AVG</option>
+        </select>
+    </div>
+    <div>
+        <select class="button-4" name="output_aggr" id="output_aggr">
+            <option value="product">POST(Price)</option>
+            <option value="review">POST(Brand)</option>
+            <option value="rel_view">POST(Senti)</option>
+            <option value="rel_view">POST(Rtng)</option>
+        </select>
+    </div>
+    <div class="span-col-3">  </div>
+    <div>
+        <button class="button-4" role="button">+ FOR</button>
+    </div>
+    <div class="span-col-5">
+        <div id="editor_FOR">
+PRE(Category)='Laptop' AND POST(Senti)>0.5
+        </div>
+                    
+        <script>
+            var editor_FOR = ace.edit("editor_FOR");
+            editor_FOR.setTheme("ace/theme/xcode");
+            editor_FOR.session.setMode("ace/mode/sql");
+        </script>
+    </div>
+  </div>
+
+
+
+</body>
+</html>
+
+
+<!-- HTML !-->
+<!-- <button class="button-4" role="button">Button 4</button> -->
+

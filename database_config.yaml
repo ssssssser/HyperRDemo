@@ -1,0 +1,219 @@
+# Define headers for database tables
+database:
+  
+  amazon_product:
+    columns:
+      - PID
+      - Category
+      - Price
+      - Brand
+      - Color
+      - Quality
+    primary_key: PID
+
+  
+  amazon_review:
+    columns:
+      - ReviewID
+      - PID
+      - Sentiment
+      - Rating
+    primary_key: ReviewID
+    foreign_keys:
+      - column: PID
+        references: amazon_product.PID
+
+# Define dependencies between data sources
+# This needs to be our causal dependencies right?? Need an answer from Sainyam, Amir?
+dependencies:
+  - source: amazon_product.csv
+    destination: database.amazon_product
+    #required_columns specifies the columns that must be present in the CSV file for the data to be loaded
+    required_columns:
+      - PID
+      - Category
+      - Price
+      - Brand
+      - Color
+      - Quality
+    primary_key: PID
+
+  - source: amazon_review.csv
+    destination: database.amazon_review
+    required_columns:
+      - ReviewID
+      - PID
+      - Sentiment
+      - Rating
+    primary_key: ReviewID
+    foreign_keys:
+      - column: PID
+        references: database.amazon_product.PID
+  
+graph:
+  # - node: {Category, Price, Brand, Color, Quality, Sentiment, Rating}
+
+  # - nodes: {p1: [Category: Laptop, Price: 999, Brand: Vaio, Color: Silver, Quality: 0.7],
+  #           p2: [Category: Laptop, Price: 529, Brand: Asus, Color: Black, Quality: 0.65],
+  #           p3: [Category: Laptop, Price: 599, Brand: HP, Color: Silver, Quality: 0.5],
+  #           p4: [DSLR Camera: Laptop, Price: 549, Brand: Canon, Color: Black, Quality: 0.75],
+  #           p5: [Category: Scie Fi eBooks, Price: 15.99, Brand: Fantasy Press, Color: Blue, Quality: 0.4]
+  #           }
+
+  # - edges: {p1: [p1.Brand,p1.Quality],[p1.Brand,p1.Category],[p1.Brand,p1.Color],[p1.Brand,p1.Price],[p1.Brand,p1.Sentiment],[p1.Brand,p1.Rating],
+  #               [p1.Quality,p1.Price],[p1.Quality,p1.Sentiment],[p1.Quality,p1.Rating],[p1.Quality,p1.Price]
+  #           }
+  # - edges: {[((t1,Brand:Asus), (r1,Category)),.....]}
+
+  nodes:
+    primaryKey = 1:
+      - Quality[p1]:0.7
+      - Brand[p1]:Vaio
+      - Category[p1]:Laptop
+      - Sentiment[r1]:-0.95
+      - Rating[r1]:2
+      - Color[p1]:Silver
+      - Price[p1]:999
+
+      # - Quality[p2]:0.65
+      # - Price[p2]:529
+    
+    primaryKey = 2:
+    # nodes of tuple 2 
+      - Category[p2]:Laptop
+      - Price[p2]:529
+      - Brand[p2]:Asus
+      - Color[p2]:Black
+      - Quality[p2]:0.65
+      - Sentiment[r2]:0.7
+      - Rating[r2]:4
+      - Sentiment[r3]:-0.2
+      - Rating[r3]:1
+  # tuple1:
+    #   - Category: Category[p1]:Laptop
+    #   - Price: Price[p1]:999
+    #   - Brand: Brand[p1]:Vaio
+    #   - Color: Color[p1]:Silver
+    #   - Quality: Quality[p1]:0.7
+    #   - Sentiment: Sentiment[r1]:-0.95
+    #   - Rating: Rating[r1]:2
+    # tuple1:
+    #   Category: Laptop
+    #   Price: 999
+    #   Brand: Vaio
+    #   Color: Silver
+    #   Quality: 0.7
+    #   Sentiment: -0.95
+    #   Rating: 2
+    # tuple2:
+    #   Category: Laptop
+    #   Price: 529
+    #   Brand: Asus
+    #   Color: Black
+    #   Quality: 0.65
+    #   Sentiment1: 0.7
+    #   Rating1: 4
+    #   Sentiment2: -0.2
+    #   Rating2: 1
+
+    # tuple2:
+    #   - Category: Category[p2]:Laptop
+    #   - Price: Price[p2]:529
+    #   - Brand: Brand[p2]:Asus
+    #   - Color: Color[p2]:Black
+    #   - Quality: Quality[p2]:0.65
+    #   - Sentiment1: Sentiment[r2]:0.7
+    #   - Rating1: Rating[r2]:4
+    #   - Sentiment2: Sentiment[r3]:-0.2
+    #   - Rating2: Rating[r3]:1
+    # tuple2:
+    #   [Category: Category:Laptop,
+    #     Price: Price:529,
+    #     Brand: Brand:Asus,
+    #     Color: Color:Black,
+    #     Quality: Quality:0.65,
+    #     Sentiment1: Sentiment:0.7,
+    #     Rating1: Rating:4,
+    #     Sentiment2: Sentiment:-0.2,
+    #     Rating2: Rating:1
+    #   ]
+
+  # Edges representing dependencies between attributes
+  edges:
+    - ['Quality[p1]:0.7', 'Price[p1]:999']
+    - ['Quality[p1]:0.7', 'Rating[r1]:2']
+    - ['Quality[p1]:0.7', 'Sentiment[r1]:-0.95']
+    - ['Brand[p1]:Vaio', 'Quality[p1]:0.7']
+    - ['Brand[p1]:Vaio', 'Price[p1]:999']
+    - ['Brand[p1]:Vaio', 'Color[p1]:Silver']
+    - ['Brand[p1]:Vaio', 'Rating[r1]:2']
+    - ['Brand[p1]:Vaio', 'Sentiment[r1]:-0.95']
+    - ['Brand[p1]:Vaio', 'Category[p1]:Laptop']
+    - ['Category[p1]:Laptop', 'Sentiment[r1]:-0.95']
+    - ['Category[p1]:Laptop', 'Rating[r1]:2']
+    - ['Sentiment[r1]:-0.95', 'Rating[r1]:2']
+    - ['Color[p1]:Silver', 'Rating[r1]:2']
+    - ['Price[p1]:999', 'Rating[r1]:2']
+    - ['Price[p2]:529', 'Rating[r1]:2']
+    - ['Quality[p2]:0.65', 'Rating[r1]:2']
+
+# tuple 2
+    - ['Brand[p2]:Asus', 'Quality[p2]:0.65']
+    - ['Brand[p2]:Asus', 'Price[p2]:529']
+    - ['Brand[p2]:Asus', 'Color[p2]:Black']
+    - ['Brand[p2]:Asus', 'Rating[r2]:4']
+    - ['Brand[p2]:Asus', 'Sentiment[r2]:0.7']
+    - ['Brand[p2]:Asus', 'Rating[r3]:1']
+    - ['Brand[p2]:Asus', 'Sentiment[r3]:-0.2']
+    - ['Brand[p2]:Asus', 'Category[p2]:Laptop']
+    - ['Quality[p2]:0.65', 'Price[p2]:529']
+    - ['Quality[p2]:0.65', 'Rating[r2]:4']
+    - ['Quality[p2]:0.65', 'Rating[r3]:1']
+    - ['Quality[p2]:0.65', 'Sentiment[r2]:0.7']
+    - ['Quality[p2]:0.65', 'Sentiment[r3]:-0.2']
+    - ['Category[p2]:Laptop', 'Sentiment[r2]:0.7']
+    - ['Category[p2]:Laptop', 'Rating[r2]:4']
+    - ['Category[p2]:Laptop', 'Rating[r3]:1']
+    - ['Price[p2]:529', 'Rating[r2]:4']
+    - ['Price[p2]:529', 'Rating[r3]:1']
+    - ['Color[p2]:Black', 'Rating[r2]:4']
+    - ['Sentiment[r2]:0.7', 'Rating[r2]:4']
+    - ['Sentiment[r3]:-0.2', 'Rating[r2]:4']
+    - ['Price[p1]:999', 'Rating[r2]:4']
+    - ['Price[p1]:999', 'Rating[r3]:1']
+
+    #If edge[1] maps itself to a node that is in primary key 1,2,etc... then it will be in the outputted causal graph
+
+    # - [tuple1.Brand, tuple1.Quality]
+    # - [tuple1.Brand, tuple1.Price]
+    # - [tuple1.Brand, tuple1.Color]
+    # - [tuple1.Brand, tuple1.Rating]
+    # - [tuple1.Brand, tuple1.Sentiment]
+    # - [tuple1.Brand, tuple1.Category]
+    # - [tuple1.Quality, tuple1.Price]
+    # - [tuple1.Quality, tuple1.Rating]
+    # - [tuple1.Quality, tuple1.Sentiment]
+    # - [tuple1.Category, tuple1.Sentiment]
+    # - [tuple1.Category, tuple1.Rating]
+    # - [tuple1.Price, tuple1.Rating]
+    # - [tuple1.Color, tuple1.Rating]
+    # - [tuple1.Sentiment, tuple1.Rating]
+    # - ['Price[p2]:529', tuple1.Rating]
+  
+
+    # - ['Brand[p2]:Asus', 'Quality[p2]:0.65']
+    # - ['Brand[p2]:Asus', 'Price[p2]:529']
+    # - ['Brand[p2]:Asus', tuple2.Color]
+    # - ['Brand[p2]:Asus', tuple2.Rating1]
+    # - ['Brand[p2]:Asus', tuple2.Sentiment1]
+    # - ['Brand[p2]:Asus', tuple2.Rating2]
+    # - ['Brand[p2]:Asus', tuple2.Sentiment2]
+    # - ['Brand[p2]:Asus', tuple2.Category]
+    # - ['Quality[p2]:0.65', 'Price[p2]:529']
+    # - ['Quality[p2]:0.65', tuple2.Rating]
+    # - ['Quality[p2]:0.65', tuple2.Sentiment]
+    # - [tuple2.Category, tuple2.Sentiment]
+    # - [tuple2.Category, tuple2.Rating]
+    # - ['Price[p2]:529', tuple2.Rating]
+    # - [tuple2.Color, tuple2.Rating]
+    # - [tuple2.Sentiment, tuple2.Rating]

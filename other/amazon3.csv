@@ -1,0 +1,15 @@
+Tuple ID,Rtng,Type,Category
+t1,5,PRE,Tablet
+t1,4.5,POST,Tablet
+t1,4,PRE,Tablet
+t1,3.8,POST,Tablet
+t1,4.9,PRE,Headphone
+t1,5,POST,Headphone
+t1,5,PRE,Headphone
+t1,3,POST,Headphone
+t1,4,PRE,Laptop
+t1,4.6,POST,Laptop
+t1,2,PRE,Laptop
+t1,3,POST,Laptop
+t1,4.8,PRE,Phone
+t1,4,POST,Phone

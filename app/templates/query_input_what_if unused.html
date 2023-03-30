@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>HypeR</title>
+<!-- <head>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>  
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>    -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='what_if.css') }}">
+    <script src="https://pagecdn.io/lib/ace/1.4.5/ace.js" integrity="sha256-5Xkhn3k/1rbXB+Q/DX/2RuAtaB4dRRyQvMs83prFjpM=" crossorigin="anonymous"></script>
+    <!-- <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> -->
+    <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+    
+    <style>
+    /* Style the tab */
+    .tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    }
+
+    /* Style the buttons inside the tab */
+    .tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+    }
+
+    /* Change background color of buttons on hover */
+    .tab button:hover {
+    background-color: #ddd;
+    }
+
+    /* Create an active/current tablink class */
+    .tab button.active {
+    background-color: #ccc;
+    }
+
+    /* Style the tab content */
+    .tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+    }
+    </style>
+
+
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+    <div class="w3-bar w3-blue w3-card w3-middle-align w3-large">
+   <center>HypeR: : Hypothetical Reasoning With What-If and How-To Queries Using a Probabilistic Causal Approach</center></div>
+   <div class="w3-bar w3-blue w3-card w3-middle-align w3-large">
+      <center><a href="{{ url_for('main.index') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Home</a>
+      <a href="https://sainyamgalhotra.github.io/papers/HypeR_fullversion.pdf" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Paper</a>
+      <a href="{{ url_for('main.query_input_what_if') }}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">What-if Query</a></center>
+      <a href="{{ url_for('main.query_input_how_to') }}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">How-to Query</a></center>
+    </div>
+  
+    <!-- Navbar on small screens -->
+    <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
+      <a href="#" class="w3-bar-item w3-button w3-padding-large">Demo</a>
+      <a href="#" class="w3-bar-item w3-button w3-padding-large">Papers</a>
+      <a href="#" class="w3-bar-item w3-button w3-padding-large">Contact Us</a>
+    </div>
+  </div>
+<br><br> 
+
+<form method = 'post' action = '/query_input_what_if'>
+<div class="container">
+
+
+    <!-- TOP LEFT -->
+    <div class="top_banner" >
+        <div class="tab" style="margin-top: 32px;">
+            <button class="tablinks" onclick="openCity(event, 'What-If')">What-If</button>
+            <button class="tablinks" onclick="openCity(event, 'How-To')">How-To</button>
+        </div>
+
+        
+    </div> 
+
+    <!-- TOP RIGHT  -->
+    <div class="top_banner">
+
+        <div class="tab" style="margin-top: 32px;">
+            <button class="tablinks" onclick="openCity(event, 'Overall')">Overall</button>
+            <button class="tablinks" onclick="openCity(event, 'Vary Updates')">Vary Updates</button>
+        </div>
+
+    </div>
+
+    <!-- INPUT GRID MIDDLE LEFT -->
+    <div class="input_grid">
+        <div>
+            <label>Choose Database</label>
+            <!-- <button class="button-4" role="button" disabled style="color:#EDEFF2: #929090;">Enter Aggregate Query Here:</button> -->
+        </div>
+
+        
+        <div class="span-col-5">
+            {{ form.database(id='database', class = 'button') }}
+            <div style="display: inline; float: right;">
+                <button class="button-4" role="button" style = "background-color: rgba(27, 31, 35, 0.15)">Specify Constraints</button>
+                <!-- {{ form.base_tables(class = 'button-4')}} -->
+                <!-- <button class="button-4" name = 'base_tables' role="button">Base Tables</button> -->
+            </div>
+            <!-- <div class="inline-text" style="display: inline;"> </div> -->
+        </div>
+
+
+        <!-- USE ROW -->
+        <div>
+            <label>Aggregate Query</label>
+            <!-- <button class="button-4" role="button" disabled style="color:#EDEFF2: #929090;">USE</button> -->
+        </div>
+        
+        <!-- <div class="span-col-5">
+
+            {{ form.use_table(id='table-dropdown',class='button-4')}} -->
+            <!-- <select class="button-4" name="table" id="table-dropdown">
+                <option value="product">Custom</option>
+                <option value="review">Review</option>
+                <option value="rel_view">Product</option>
+            </select> -->
+            <!-- <div style="display: inline;">
+                <input class="button-4" type="text" id="relview" name="relview" value="AS RelevantView" disabled
+                style="background-color: rgba(216, 216, 216, 0.548); width: 165px">
+            </div> -->
+            <!-- <div class="inline-text" style="display: inline;"> </div>
+        </div> -->
+
+        <div class="span-col-5"> 
+            <div id="editor_USE"></div>
+            <textarea name="use" id="use" style="display: none;">{{ form.use.data }}</textarea>
+
+            <script>
+                var editor_USE = ace.edit("editor_USE");
+                var textarea = document.getElementById("use");
+                editor_USE.setTheme("ace/theme/xcode"); 
+                // cobalt, dawn, solarized_light, xcode
+                editor_USE.session.setMode("ace/mode/sql");
+                editor_USE.setOptions({
+                    // fontFamily: "tahoma",
+                    fontSize: "12pt"
+                });
+                editor_USE.getSession().setValue(textarea.value);
+                editor_USE.getSession().on('change', function(){
+                    textarea.value=editor_USE.getSession().getValue();
+                });
+            </script>
+         
+            <div style="width: 100px; height: 50px;">
+                <br>
+                {{ form.run_relevant(class = 'button-4', style="background-color: rgba(27, 31, 35, 0.15);")}}
+                <!-- <button class="button-4" name = 'run_relevant' role="button" style="background-color: rgba(130, 192, 128, 0.548);">RUN RELEVANT VIEW</button> -->
+            </div>
+    
+    
+        </div>
+        <!-- OUTPUT ROW -->
+        <!-- <div>
+            <button class="button-4" role="button" disabled style="color:#EDEFF2: #929090;">OUTPUT</button>
+        </div>
+        <div class="span-col-5">
+            {{ form.output_type(class='button-4')}} -->
+            <!-- <select class="button-4" name="output_aggr" id="output_aggr">
+                <option value="count">AVG</option>
+                <option value="sum">SUM</option>
+                <option value="avg">COUNT</option>
+            </select> -->
+            <!-- <div style="display: inline;">
+                {{ form.output_attrs(class='button-4')}} -->
+                <!-- <select class="button-4" name="output_aggr" id="output_aggr">
+                    <option value="product">POST(Rtng)</option>
+                    <option value="review">POST(Brand)</option>
+                    <option value="rel_view">POST(Senti)</option>
+                    <option value="rel_view">POST(Price)</option>
+                </select> -->
+            <!-- </div> -->
+        <!-- </div>   -->
+        <!-- FOR ROW --> 
+        <!-- <div>
+        </div> 
+        <div>
+            <button class="button-4" role="button">+ FOR</button>
+        </div>
+        <div class="span-col-4">
+            <div id="editor_FOR"></div>
+            <textarea = name="output" id="output" style="display: none;">{{ form.output.data}}</textarea>
+                        
+            <script>
+                var editor_FOR = ace.edit("editor_FOR");
+                var textarea_for = document.getElementById("output");
+                editor_FOR.setTheme("ace/theme/xcode");
+                editor_FOR.session.setMode("ace/mode/sql");
+                editor_FOR.setOptions({
+                    // fontFamily: "tahoma",
+                    fontSize: "12pt"
+                });
+                editor_FOR.getSession().setValue(textarea_for.value);
+                editor_FOR.getSession().on('change',function(){
+                    textarea_for.value=editor_FOR.getSession().getValue();
+                });
+            </script>
+        </div> -->
+
+        <div>
+            <label>Update Attribute</label>
+        </div>
+ 
+
+        <div class = 'span-col-5'>
+            <!-- <script>
+                function changeButtonText(value){
+                    document.getElementById('update_attr2').innerText = value;
+                }
+            </script> -->
+            If we were to update the attribute :
+            <div class="span-col-5">
+                <select class="button" id = 'ShowButton'>
+                    <option value="blank"></option>
+                    <option value="product">POST(Rtng)</option>
+                    <option value="review">POST(Brand)</option>
+                    <option value="rel_view">POST(Price)</option>
+                    <option value="rel_view">POST(Category)</option>
+                    <option value="rel_view">POST(Quality)</option>
+                    <option value="rel_view">POST(Color)</option>
+                </select> 
+            <div class='inline-text' style="display: inline;"> as </div>
+            <div style="display: inline;">
+                <input class="button" type="number" id="update_const" name="update_const" size="4"
+                style="width: 100px;" > <!-- TODO KAYVON put input value such as 1.1-->
+            </div>
+            <div style="display: inline;">
+                <!-- {{ form.update_sign(class='button-4',id='update_dropdown')}} -->
+                <select class="button"  name="update_attribute" id="update_dropdown">
+                    <option value="blank"></option>
+                    <option value="product">x</option>
+                    <option value="review">+</option>
+                    <option value="rel_view">.</option>
+                </select>
+            </div>
+
+            <div style="display: inline;">
+                <input class="button" type="text" id="update_attr2" name="update_attr2" 
+                style="background-color: rgba(216, 216, 216, 0.548); width: 120px">
+                 <!-- TODO KAYVON put input value such as PRE(Price)-->
+            </div>
+        </div>
+
+
+<!-- 
+        <div class="input-group">
+                <div class="btn-group">
+                  <button id="userNamesActionButton" type="button" class="btn 
+                   btn-default dropdown-toggle" data-toggle="dropdown" aria- 
+                   haspopup="true" aria-expanded="false">
+                   Action <span class="caret"></span>
+                </button>
+                <ul id="userNamesActionButtonMenu" class="dropdown-menu">
+                  <li><a href="#" onclick="changeButtonText(this.innerText)">Filtern</a></li>
+                  <li><a href="#" onclick="changeButtonText(this.innerText)">Anzeigen</a></li>
+                </ul>
+              </div>
+
+            </span>
+          </div> -->
+          
+        <div class="span-col-5">
+            For a subset that satisfies:
+            <!-- <div>
+            <button class="button-4" role="button" style = "background-color: rgba(27, 31, 35, 0.15)">+ WHEN</button>
+        </div>
+    -->
+        <div class="span-col-4">
+            <div id="editor_WHEN"></div>
+            <textarea = name="when" id="when" style="display: none;">{{ form.when.data}}</textarea>
+                        
+            <script>
+                var editor_WHEN = ace.edit("editor_WHEN");
+                var whenarea_for = document.getElementById("when");
+                editor_WHEN.setTheme("ace/theme/xcode");
+                editor_WHEN.session.setMode("ace/mode/sql");
+                editor_WHEN.setOptions({
+                    // fontFamily: "tahoma",
+                    fontSize: "12pt"
+                });
+                editor_WHEN.getSession().setValue(whenarea_for.value);
+                editor_WHEN.getSession().on('change',function(){
+                    whenarea_for.value=editor_WHEN.getSession().getValue();
+                });
+            </script>
+        </div>
+            
+            </div>
+        </div>
+
+        
+        
+        <div style="display: inline; float: right; margin-top: 10px;">
+            <button class="button-4" name = 'run' role="button" style="background-color: rgba(27, 31, 35, 0.15);">RUN</button>
+        </div>
+        
+    </div>
+
+
+    <div class="w3-container">
+        <div class="w3-bar w3-gray">
+          <button class="w3-bar-item w3-button tablink w3-blue" onclick="openCity(event,'London')">London</button>
+          <button class="w3-bar-item w3-button tablink" onclick="openCity(event,'Paris')">Paris</button>
+          <button class="w3-bar-item w3-button tablink" onclick="openCity(event,'Tokyo')">Tokyo</button>
+        </div>
+        
+        <div id="London" class="w3-container w3-border city">
+          <h2>London</h2>
+          <p>London is the capital city of England.</p>
+        </div>
+      
+        <div id="Paris" class="w3-container w3-border city" style="display:none">
+          <h2>Paris</h2>
+          <p>Paris is the capital of France.</p> 
+        </div>
+      
+        <div id="Tokyo" class="w3-container w3-border city" style="display:none">
+          <h2>Tokyo</h2>
+          <p>Tokyo is the capital of Japan.</p>
+        </div>
+      </div>
+      
+      <script>
+      function openCity(evt, cityName) {
+        var i, x, tablinks;
+        x = document.getElementsByClassName("city");
+        for (i = 0; i < x.length; i++) {
+          x[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablink");
+        for (i = 0; i < x.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" w3-red", "");
+        }
+        document.getElementById(cityName).style.display = "block";
+        evt.currentTarget.className += " w3-red";
+      }
+      </script>
+
+
+    <!-- OUTPUT GRID MIDDLE RIGHT -->
+    <div id = 'Overall' class="output_grid">
+        {%- if causal_graph -%}
+        <div class="bold_title">
+            Aggregate Query View
+        </div>
+        <div>
+            <div id="bar-out-2">
+                <img id="bar" src="/static/bar_graph.jpg" style="
+                width: 400px;
+                height: 150px;
+                object-fit: contain;">
+            </div>
+            
+        </div>
+        {%- endif %}
+
+        {%- if run_button -%}
+        <div class="bold_title">
+            Update Query View
+        </div>
+        <div>
+            <div id="bar-out-2">
+                <img id="bar" src="/static/bar_graph2.jpg" style="
+                width: 400px;
+                height: 150px;
+                object-fit: contain;">
+            </div>
+            
+        </div>
+        {%- endif %}
+    </div>
+
+    <div id = 'Vary Update' class="output_grid" style="display:none">
+        <div>text</div>
+    </div>
+
+    <!-- <script>
+        function openCity(evt, cityName) {
+          var i, x, tablinks;
+          x = document.getElementsByClassName("outputgrid");
+          for (i = 0; i < x.length; i++) {
+            x[i].style.display = "none";
+          }
+          tablinks = document.getElementsByClassName("tablinks");
+          for (i = 0; i < x.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" w3-red", "");
+          }
+          document.getElementById(cityName).style.display = "block";
+          evt.currentTarget.className += " w3-red";
+        }
+    </script> -->
+
+    <!-- CAUSAL GRAPH BOTTOM LEFT
+    <div class="bottom_banner">
+        {%- if causal_graph -%}
+        <div id="causal_graph">
+            <img id="causal_img" src="/static/causal_graph2.jpg" alt="causal graph" >
+        </div>
+        <div class="bold_title">
+            Causal Graph
+        
+        </div>
+        {%- endif %}
+    </div>
+-->
+    <!-- RELEVANT VIEW BOTTOM RIGHT     
+    <div class="bottom_banner">
+        <div class="bold_title">
+            Relevant View
+        </div>
+        <br>
+        <div id="rel_view_table">
+            <table border="1" class="dataframe">
+                <thead>
+                <tr style="text-align: right;">
+                    {% for attr in attr_list %}
+                        <th>{{ attr }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                    <tr>
+                        {% for i in range(len_item) %}
+                            <td>{{ item[i] }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+-->
+</div>
+</form>
+
+
+
+</body>
+</html>
+

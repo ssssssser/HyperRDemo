@@ -1,0 +1,258 @@
+.container {
+    display: grid;
+    grid-template-columns: 640px 900px;
+    grid-template-rows: 100px 600px 360px;
+    grid-column-gap: 15px;
+    grid-row-gap: 15px;
+    justify-items: stretch;
+    align-items: stretch;
+}
+
+.input_grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-gap: 10px;
+    /* width: 638px; */
+    border-style: dotted;
+    border-width: 1px
+}
+
+.output_grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+    /* width: 625px; */
+    border-style: dotted;
+    border-width: 1px
+}
+
+.top_banner {
+    border-style: dotted;
+    border-width: 1px
+}
+
+.bottom_banner {
+    border-style: dotted;
+    border-width: 1px
+}
+
+
+#editor_USE { 
+    position: relative;
+    height:160px;
+    width: 515px
+}
+
+#editor_WHEN { 
+    position: relative;
+    height:50px;
+    width: 350px
+}
+
+#editor_FOR { 
+    position: relative;
+    height:70px;
+    width: 350px
+}
+
+.output {
+    height: 400px;
+    width: 520px;
+    border-style: dotted;
+    border-width: 1px
+}
+
+.span-col-4{grid-column: span 4 / auto;}
+
+.span-col-5{grid-column: span 5 / auto;}
+
+.span-col-3{grid-column: span 3 / auto;}
+
+.span-row-2{grid-row: span 2 / auto;}
+
+.inline-text {
+    font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+/* CSS */
+.button-4 {
+appearance: none;
+background-color: #FAFBFC;
+border: 1px solid rgba(27, 31, 35, 0.15);
+border-radius: 6px;
+box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0, rgba(255, 255, 255, 0.25) 0 1px 0 inset;
+box-sizing: border-box;
+color: #24292E;
+cursor: pointer;
+display: inline-block;
+font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+font-size: 16px;
+font-weight: 500;
+line-height: 20px;
+list-style: none;
+padding: 6px 16px;
+position: relative;
+transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+user-select: none;
+-webkit-user-select: none;
+touch-action: manipulation;
+vertical-align: middle;
+white-space: nowrap;
+word-wrap: break-word;
+/* grid-row: span 2 / auto; */
+}
+
+.button-4:hover {
+background-color: #F3F4F6;
+text-decoration: none;
+transition-duration: 0.1s;
+}
+
+.button-4:disabled {
+background-color: #FAFBFC;
+border-color: rgba(27, 31, 35, 0.15);
+color: #959DA5;
+cursor: default;
+}
+
+.button-4:active {
+background-color: #EDEFF2;
+box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 inset;
+transition: none 0s;
+}
+
+.button-4:focus {
+outline: 1px transparent;
+}
+
+.button-4:before {
+display: none;
+}
+
+.button-4:-webkit-details-marker {
+display: none;
+}
+
+
+/* DROPDOWN */
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+  
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+  
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+  
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+  
+.dropdown:hover .dropbtn {
+    background-color: #3e8e41;
+}
+
+
+
+/* CAUSAL GRAPH */
+
+#causal_graph {
+    /* background: url(other/causal_graph2.jpg) no-repeat center center; */
+    height:300px;
+    width:400px;
+    /* border: 2px solid rgb(38, 0, 255); */
+    /* Center the div */
+    margin: auto;
+
+}
+
+#causal_img {
+    width: 400px;
+    height: 300px;
+    object-fit: contain;
+}
+
+#causal_title {
+    /* border: 1px solid rgb(38, 0, 255); */
+    /* Center the div */
+    margin: auto;
+    /* Center the text */
+    text-align: center;
+    /* Make bold */
+    font-weight: bold;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 20px;
+    
+}
+
+
+
+
+/* TABLES */
+
+#rel_view_table {
+    height:400px;
+    width:600px;
+    margin: auto;
+}
+
+table {
+    border: none;
+    border-collapse: collapse;
+    border-spacing: 0;
+    color: black;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    table-layout: fixed;
+    margin: auto;
+}
+
+thead {
+    border-bottom: 1px solid black;
+    vertical-align: bottom;
+}
+
+tr, th, td {
+    text-align: right;
+    vertical-align: middle;
+    padding: 0.5em 0.5em;
+    line-height: normal;
+    white-space: normal;
+    max-width: none;
+    border: none;
+}
+
+th {
+    font-weight: bold;
+}
+
+tbody tr:nth-child(odd) {
+    background: #f5f5f5;
+}
+
+tbody tr:hover {
+    background: rgba(66, 165, 245, 0.2);
+}

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>HypeR</title>
+<style>
+    /* Style the popup container */
+    #popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 5px solid #ccc;
+        box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.3);
+        background-color: #fff;
+        z-index: 1;
+        padding: 20px;
+      }
+
+      /* Style the popup image */
+      #popup img {
+        max-width: 100%;
+        max-height: 100%;
+        border: 5px solid #fff;
+      }
+      /* Style the buttons */
+      #popup button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        border: none;
+        background-color: #ccc;
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      /* Style the background */
+      #background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url(background.jpg);
+        background-size: cover;
+        filter: blur(5px);
+        z-index: 0;
+        display: none;
+      }
+  </style>
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='what_if.css') }}">
+    <script src="https://pagecdn.io/lib/ace/1.4.5/ace.js" integrity="sha256-5Xkhn3k/1rbXB+Q/DX/2RuAtaB4dRRyQvMs83prFjpM=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+  /> -->
+</head>
+
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+    <div class="w3-bar w3-blue w3-card w3-middle-align w3-large">
+   <center>HypeR: : Hypothetical Reasoning With What-If and How-To Queries Using a Probabilistic Causal Approach</center></div>
+   <div class="w3-bar w3-blue w3-card w3-middle-align w3-large">
+      <center><a href="{{ url_for('main.index') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Home</a>
+      <a href="https://sainyamgalhotra.github.io/papers/HypeR_fullversion.pdf" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Paper</a>
+      <a href="{{ url_for('main.query_input_what_if') }}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">What-if Query</a></center>
+      <a href="{{ url_for('main.query_input_how_to') }}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">How-to Query</a></center>
+    </div>
+  
+    <!-- Navbar on small screens -->
+    <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
+      <a href="#" class="w3-bar-item w3-button w3-padding-large">Demo</a>
+      <a href="#" class="w3-bar-item w3-button w3-padding-large">Papers</a>
+      <a href="#" class="w3-bar-item w3-button w3-padding-large">Contact Us</a>
+    </div>
+  </div>
+<br><br> 
+
+<form method = 'post' action = '/query_input_what_if'>
+    <!-- left bar showing schema & causal graph & causal rule -->
+    <div class="w3-sidebar w3-bar-block w3-light-grey w3-card" style="width: 160px;">
+    <a href="#" class="w3-bar-item w3-button"><b>Database Schema</b></a> 
+    <button type='button' class="w3-button w3-block w3-left-align" onclick="myAccFunc('demoAcc1')">
+      amazon_product <i class="fa fa-caret-down"></i>
+    </button>
+    <!--TODO Extract this from the dataset so we don't have to have it hardcoded -->
+    <div id="demoAcc1" class="w3-hide w3-white w3-card">
+      <a href="#" class="w3-bar-item w3-button"><u><b>PID (PK)</b></u></a>
+      <a href="#" class="w3-bar-item w3-button">Category</a>
+      <a href="#" class="w3-bar-item w3-button">Price</a>
+      <a href="#" class="w3-bar-item w3-button">Brand</a>
+      <a href="#" class="w3-bar-item w3-button">Color</a>
+      <a href="#" class="w3-bar-item w3-button">Quality</a>
+    </div>
+    <button type='button' class="w3-button w3-block w3-left-align" onclick="myAccFunc('demoAcc2')">
+        amazon_review <i class="fa fa-caret-down"></i>
+      </button>
+      <div id="demoAcc2" class="w3-hide w3-white w3-card">
+        <a href="#" class="w3-bar-item w3-button"><u><b>ReviewID (PK)</b></u></a>
+        <a href="#" class="w3-bar-item w3-button"><u><b>PID (FK)</b></u></a>
+        <a href="#" class="w3-bar-item w3-button">Sentiment</a>
+        <a href="#" class="w3-bar-item w3-button">Rating</a>
+        <label><b>Detail:</b></label>
+        <textarea class="comment" style="width: 160px;" >PID in table "amazon_review" is a foreign key referencing PID in table "amazon_product"
+        </textarea>
+      </div>
+    
+      <br>
+
+      <!-- new code for causal graph popup -->
+      <!-- TODO add the tuple row + a refresh button  -->
+      <button class="button-4 w3-block w3-left-align">
+        <a style="text-decoration:none" href="#popup" onclick="showPopup('/static/causal_graph_new.jpg')">Causal Graph</a>
+      </button>
+
+      <div id="popup">
+        <img id="popup-image" src="/static/causal_graph_new.jpg" alt="Image">
+        <button onclick="hidePopup()">Close</button>
+        <button onclick="refreshPopup()">Refresh</button>
+      </div>
+  
+      <div id="background"></div>
+
+      <script>
+        var images = ["/static/causal_graph_new.jpg", "/static/causal_graph2.jpg"]; // An array of image filenames (our causal graphs)
+        var currentIndex = 0; // The index of the currently displayed image
+
+        function showPopup(random_causal_graph) {
+          var popup = document.getElementById("popup");
+          var background = document.getElementById("background");
+          var popupImage = document.getElementById("popup-image");
+          popupImage.src = random_causal_graph;
+          popup.style.display = "block";
+          background.style.display = "block";
+          popup.addEventListener("click", hidePopup);
+        }
+  
+        function hidePopup() {
+          var popup = document.getElementById("popup");
+          var background = document.getElementById("background");
+          popup.style.display = "none";
+          background.style.display = "none";
+        //   popup.removeEventListener("click", hidePopup);
+        }
+        function refreshPopup() {
+        currentIndex = (currentIndex + 1) % images.length; // Increment the index, wrapping around to 0 at the end of the array
+        var popupImage = document.getElementById("popup-image");
+        popupImage.src = images[currentIndex]; // Set the image source to the next image in the array
+      }
+      </script>
+
+    
+    <!-- TODO add a plain text file-->
+    <button class="button-4 w3-block w3-left-align">
+        <a style="text-decoration:none" href="#causal-rules">Causal Rules</a>
+    </button>
+    </div>
+  <script>
+    function myAccFunc(listname) {
+    var x = document.getElementById(listname);
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+        x.previousElementSibling.className += " w3-green";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+        x.previousElementSibling.className = x.previousElementSibling.className.replace(
+        " w3-green",
+        ""
+        );
+    }
+    }
+  </script>
+
+<div class="container" style=" margin-top: 50px; margin-left: 160px;">
+
+    <!-- INPUT GRID MIDDLE LEFT -->
+    <div class="input_grid">
+        <div>
+            <label>Choose Database</label>
+            <!-- <button class="button-4" role="button" disabled style="color:#EDEFF2: #929090;">Enter Aggregate Query Here:</button> -->
+        </div>
+        
+        <div class="span-col-5">
+            {{ form.database(id='database', class = 'button',style='padding: 6px 16px') }}
+            <!-- <div style="display: inline; float: right;"> -->
+                <!-- {{ form.specify_constraints(class = 'button-4', role="button", style = "background-color: rgba(27, 31, 35, 0.15)")}} -->
+                <!-- <button type = 'submit' class="button-4" name = 'specify_constraints' role="button" style = "background-color: rgba(27, 31, 35, 0.15)">Specify Constraints</button> -->
+                <!-- <button class="button-4" name = 'base_tables' role="button">Base Tables</button> -->
+            <!-- </div> -->
+            <!-- <div class="inline-text" style="display: inline;"> </div> -->
+        </div>
+
+
+        <!-- USE ROW -->
+        <div>
+            <label>Aggregate Query</label> 
+            <!-- <button class="button-4" role="button" disabled style="color:#EDEFF2: #929090;">USE</button> -->
+        </div>
+        
+        
+            <!-- <div style="display: inline;">
+                <input class="button-4" type="text" id="relview" name="relview" value="AS RelevantView" disabled
+                style="background-color: rgba(216, 216, 216, 0.548); width: 165px">
+            </div> -->
+            <!-- <div class="inline-text" style="display: inline;"> </div>
+        </div> -->
+
+        <div class="span-col-5"> 
+            <div id="editor_USE"></div>
+            <textarea name="use" id="use" style="display: none;">{{ form.use.data }}</textarea>
+
+            <script>
+                var editor_USE = ace.edit("editor_USE");
+                var textarea = document.getElementById("use");
+                editor_USE.setTheme("ace/theme/xcode"); 
+                // cobalt, dawn, solarized_light, xcode
+                editor_USE.session.setMode("ace/mode/sql");
+                editor_USE.setOptions({
+                    // fontFamily: "tahoma",
+                    fontSize: "12pt"
+                });
+                editor_USE.getSession().setValue(textarea.value);
+                editor_USE.getSession().on('change', function(){
+                    textarea.value=editor_USE.getSession().getValue();
+                });
+            </script>
+         
+            <!-- <div style="width: 100px; height: 50px;">
+                <div class="help-tip" id="help-tip-whatif">
+                    <p> Help Tip: Group data by a attribute and aggregate the output attribute. The first attribute of table you got should be the groupby attribute, and the second attribute should be the output attribute</p>
+                </div>
+                <br>
+                {{ form.run_relevant(class = 'button-4', style="background-color: rgba(27, 31, 35, 0.15);")}}
+                THIS LINE IS COMMENTED<button class="button-4" name = 'run_relevant' role="button" style="background-color: rgba(130, 192, 128, 0.548);">RUN RELEVANT VIEW</button>
+            </div> -->
+
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div style="width: 100px; height: 50px;">
+                    <div class="help-tip" id="help-tip-whatif">
+                        <p> Help Tip: Group data by a attribute and aggregate the output attribute. The first attribute of table you got should be the groupby attribute, and the second attribute should be the output attribute</p>
+                    </div>
+                    <br>
+                    {{ form.run_relevant(class = 'button-4', style="background-color:#2196F3; color: #fff;")}}
+                </div>
+            
+                {{ form.sample_query(id='sample_query_button', class = 'button-4', style="background-color: rgba(130, 192, 128, 0.548); margin-left: 10px;") }}
+            </div>
+        <br>
+        <br>
+
+        <script>
+            // Get references to the textarea and the button
+            var textarea = document.getElementById('use');
+            var button = document.getElementById('sample_query_button');
+            
+            // Add an event listener to the button
+            button.addEventListener('click', function() {
+                // Set the value of the textarea to some sample data
+                textarea.value = 'SELECT T1.category, AVG(T2.rating) as rating \nFROM amazon_product AS T1, amazon_review as T2\nWHERE T1.pid = T2.pid\nGROUP BY T1.category';
+            });
+            // add functionallity to output the graph(cached image)
+        </script>
+        
+        </div>
+        <!-- OUTPUT ROW -->
+        <!-- <div>
+            <button class="button-4" role="button" disabled style="color:#EDEFF2: #929090;">OUTPUT</button>
+        </div>
+        <div class="span-col-5">
+            {{ form.output_type(class='button-4')}} -->
+            <!-- <select class="button-4" name="output_aggr" id="output_aggr">
+                <option value="count">AVG</option>
+                <option value="sum">SUM</option>
+                <option value="avg">COUNT</option>
+            </select> -->
+            <!-- <div style="display: inline;">
+                {{ form.output_attrs(class='button-4')}} -->
+                <!-- <select class="button-4" name="output_aggr" id="output_aggr">
+                    <option value="product">POST(Rtng)</option>
+                    <option value="review">POST(Brand)</option>
+                    <option value="rel_view">POST(Senti)</option>
+                    <option value="rel_view">POST(Price)</option>
+                </select> -->
+            <!-- </div> -->
+        <!-- </div>   -->
+        <!-- FOR ROW --> 
+        <!-- <div>
+        </div> 
+        <div>
+            <button class="button-4" role="button">+ FOR</button>
+        </div>
+        <div class="span-col-4">
+            <div id="editor_FOR"></div>
+            <textarea = name="output" id="output" style="display: none;">{{ form.output.data}}</textarea>
+                        
+            <script>
+                var editor_FOR = ace.edit("editor_FOR");
+                var textarea_for = document.getElementById("output");
+                editor_FOR.setTheme("ace/theme/xcode");
+                editor_FOR.session.setMode("ace/mode/sql");
+                editor_FOR.setOptions({
+                    // fontFamily: "tahoma",
+                    fontSize: "12pt"
+                });
+                editor_FOR.getSession().setValue(textarea_for.value);
+                editor_FOR.getSession().on('change',function(){
+                    textarea_for.value=editor_FOR.getSession().getValue();
+                });
+            </script>
+        </div> -->
+
+  
+ 
+        <div>
+            <label>Update Attribute</label>
+            <div>
+                <button type = 'button' class="button-4" role="button" style = "background-color: rgba(27, 31, 35, 0.15); display: inline; border-radius: 80%" onclick = AddMore()>+</button>
+            </div>
+        </div>
+        <div class = 'span-col-5' id="update section">
+            <div style="float: right; margin-top: 10px;">
+                {{ form.overall(class = 'w3-bar-item w3-button tablink', style="background-color: rgba(27, 31, 35, 0.15);")}}
+                {{ form.vary_updates(class = 'w3-bar-item w3-button tablink active', style="background-color: rgba(27, 31, 35, 0.15);")}}
+              </div>
+              <div style="clear: both;"></div>
+
+            If we were to update the attribute :
+            <div class="span-col-5">
+            </div>
+
+            {%- if vary_updates -%}
+            <div class="span-col-5">
+
+                <input class="button-4" type="text" id="relview" name="relview" value="Update" disabled
+                    style="background-color: rgba(216, 216, 216, 0.548); width: 100px">
+                <div style="display: inline;">
+                    {{form.update_attrs_vary(class="button", id = 'ShowButton2', onchange="stringChange2()")}}
+                </div>
+            </div>
+
+            <div class="span-col-5">
+                <input class="button-4" type="text" id="relview" name="relview" value="From" disabled
+                    style="background-color: rgba(216, 216, 216, 0.548); width: 100px">
+                    
+                <div style="display: inline;">
+                    {{form.update_const_vary_from(class="button", type="number", step='any', id="update_const",size="4",style="width: 100px;")}}
+                </div> 
+            </div>
+            <div class="span-col-5">
+                <input class="button-4" type="text" id="relview" name="relview" value="To" disabled
+                style="background-color: rgba(216, 216, 216, 0.548); width: 100px">
+                <div style="display: inline;">
+                    {{form.update_const_vary_to(class="button", type="number",step='any', id="update_const",size="4",style="width: 100px;")}}
+                </div>
+            <div style="display: inline;">
+                
+                {{form.update_sign_vary(class="button", id="update_dropdown")}}
+            </div>
+
+            <div style="display: inline;">
+                <input class="button" type="text" id="update_attr3" name="update_attr3  " 
+                disabled style="background-color: rgba(216, 216, 216, 0.548); width: 120px">
+            </div>
+
+            <script>
+                function stringChange2(){
+                    // var button = document.querySelector('.myShowButton')
+                    var button = document.getElementById('ShowButton2').value
+                    if(button == 'blank'){
+                        document.getElementById('update_attr3').value = ""
+                    }
+                    else{document.getElementById('update_attr3').value = "PRE("+button+")"}      
+                }
+            </script>
+        </div>
+        <div class="span-col-5">
+            <div style="display: inline; float: left;">
+            <div class="help-tip" id="help-tip-whatif2">
+            <p> Help Tip: Choose the update attribute, and specify the range to show update output.</p>
+        </div>
+       
+    </div>
+
+        </div>
+                
+            {% else %}
+            <div class="span-col-5">
+                
+                {{form.update_attrs(class="button, myShowButton", id = 'ShowButton', onchange="stringChange()")}}
+
+            <div class='inline-text' style="display: inline;"> as </div>
+            <div style="display: inline;">
+                {{form.update_const(class="button", type="number", step="any", id="update_const", size="4",style="width: 100px;")}}
+
+            </div>
+            <div style="display: inline;">
+                {{ form.update_sign(class='button',id='update_dropdown')}}
+
+            </div>
+
+            <div style="display: inline;">
+                <input class="button" type="text" id="update_attr2" name="update_attr2" 
+                disabled style="background-color: rgba(216, 216, 216, 0.548); width: 120px">
+                 
+            </div>
+            <script>
+                function stringChange(){
+                    // var button = document.querySelector('.myShowButton')
+                    var button = document.getElementById('ShowButton').value
+                    if(button == 'blank'){
+                        document.getElementById('update_attr2').value = ""
+                    }
+                    else{document.getElementById('update_attr2').value = "PRE("+button+")"}      
+                }
+            </script>
+            
+        </div>
+        <div class="help-tip" id="help-tip-whatif2">
+            <p> Help Tip: example of vary update query</p>
+        </div>
+        
+        
+        {% endif %}
+        <br>
+        <!-- <div class="span-col-5"> -->
+            For a subset that satisfies:
+
+        <!-- </div> -->
+        
+
+        <div class="span-col-4" style="display: inline">
+            <div id="editor_WHEN"></div>
+            <textarea = name="when" id="when" style="display: none;">{{ form.when.data}}</textarea>
+                        
+            <script>
+                var editor_WHEN = ace.edit("editor_WHEN");
+                var whenarea_for = document.getElementById("when");
+                editor_WHEN.setTheme("ace/theme/xcode");
+                editor_WHEN.session.setMode("ace/mode/sql");
+                editor_WHEN.setOptions({
+                    // fontFamily: "tahoma",
+                    fontSize: "12pt"
+                });
+                editor_WHEN.getSession().setValue(whenarea_for.value);
+                editor_WHEN.getSession().on('change',function(){
+                    whenarea_for.value=editor_WHEN.getSession().getValue();
+                });
+            </script>
+        </div>
+        <br>
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div style="width: 100px; height: 50px;float: left;">
+                {{ form.run(class = 'button-4', style="background-color:#2196F3; color: #fff;")}}
+            </div>
+            {{ form.sample_update(id='sample_update_button', class = 'button-4', style="background-color: rgba(130, 192, 128, 0.548); margin-left: 10px;") }}
+        </div>
+        <!-- <script>
+            function populateUpdate() {
+                var updateSection = document.getElementById('update section');
+                var overallTab = document.getElementById('id_overall_tab');
+                var varyTab = document.getElementById('id_vary_updates_tab');
+                
+                // Determine which tab is currently active
+                var activeTab;
+                if (overallTab.classList.contains('active')) {
+                    activeTab = 'overall';
+                } else if (varyTab.classList.contains('active')) {
+                    activeTab = 'vary';
+                }
+                
+                // Populate dropdowns and textbox based on active tab
+                if (activeTab == 'overall') {
+                    // Populate dropdown and textbox for overall update
+                    // Replace dropdown and textbox IDs with the actual IDs in your form
+                    document.getElementById('id_update_attrs').value = '';
+                    document.getElementById('id_update_const').value = '1';
+                    document.getElementById('id_update_sign').value = 'increase';
+                    document.getElementById('update_attr2').value = 'PRE(example_attribute)';
+                } else if (activeTab == 'vary') {
+                    // Populate dropdowns and textbox for vary update
+                    // Replace dropdown and textbox IDs with the actual IDs in your form
+                    document.getElementById('id_update_attrs_vary').value = 'example_attribute';
+                    document.getElementById('id_update_const_vary_from').value = '1';
+                    document.getElementById('id_update_const_vary_to').value = '2';
+                    document.getElementById('id_update_sign_vary').value = 'increase';
+                    document.getElementById('update_attr3').value = 'PRE(example_attribute)';
+                }
+            }
+            
+            document.getElementById('id_sample_update').onclick = populateUpdate;
+            </script> -->
+            
+        <br>
+        <script>
+            var original = document.getElementById('update section');
+            function AddMore(){
+                var clone = original.cloneNode(true); // "deep" clone
+    // or clone.id = ""; if the divs don't need an ID
+                original.parentNode.appendChild(clone);
+            }
+        </script>
+    </div>
+    </div>
+
+
+
+
+    
+    <div class="w3-container">
+
+          <!-- <button class="w3-bar-item w3-button tablink" onclick="openCity(event,'London')">Overall</button>
+          <button class="w3-bar-item w3-button tablink" onclick="openCity(event,'Paris')">Vary Updates</button> -->
+
+        <div id="London" class="w3-container city">
+            {%- if specConst -%}
+            <!--Future fix: position relative (I couldn't get this picture to show up at the bottom of the page without setting it's position)-->
+            <!-- <div class="w3-container w3-cell" > -->
+            <div class="bold_title">
+                Causal Graph
+            </div>
+            <div id="bar-out-2" >
+                <img id="bar" src="/static/causal_graph2.jpg" style="
+                    width: 400px;
+                    height: 250px;
+                    object-fit: contain;
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    width: 50%;">
+            </div>
+                
+              <!-- </div> -->
+            {%- endif -%}
+
+            {%- if causal_graph -%}
+            <div class="bold_title">
+                Aggregate Query View
+            </div>
+            <div>
+                <div id="bar-out-2">
+                    <!-- <img id="bar" src="/static/bar_graph.jpg" style=" -->
+                    <img id="bar" src="/bar_plot.png" style="
+                    width: 400px;
+                    height: 250px;
+                    object-fit: contain;
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    width: 50%;">
+                </div>
+                
+            </div>
+            {%- endif %}
+    
+            {%- if final_run -%}
+            <div class="bold_title">
+                Update Query View
+            </div>
+            <div>
+                <div id="bar-out-2">
+                    <!-- <img id="bar" src="/update_bar_plot.png" style=" -->
+                    <img id="bar" src="/static/update_bar_graph.jpg" style="
+                    width: 400px;
+                    height: 250px;
+                    object-fit: contain;
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                    width: 50%;">
+                </div>
+            </div>
+            {%- endif %}
+
+            {%- if show_vary_updates -%}
+
+            <!-- <div class="w3-container w3-cell"> -->
+            <div id="bar-out-2">
+                <img id="bar" src="/static/line_graph.jpg" style="
+                width: 400px;
+                height: 250px;
+                object-fit: contain;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 50%;">
+            </div>
+            
+            <!-- </div> -->
+            {%- endif -%}
+
+        </div>
+
+    
+    </div>
+</form>
+
+<script>
+    if ( window.history.replaceState ) {
+    window.history.replaceState( null, null, window.location.href );
+  }
+  </script>
+
+</body>
+</html>
+

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<title>HypeR</title>
+<head>
+
+</head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
+.w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+.fa-anchor,.fa-coffee {font-size:200px}
+</style>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar w3-blue w3-card w3-middle-align w3-large">
+ <center>HypeR: : Hypothetical Reasoning With What-If and How-To Queries Using a Probabilistic Causal Approach</center></div>
+ <div class="w3-bar w3-blue w3-card w3-middle-align w3-large">
+    <center><a href="{{ url_for('main.index') }}" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
+    <a href="https://sainyamgalhotra.github.io/papers/HypeR_fullversion.pdf" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Paper</a>
+    <a href="{{ url_for('main.query_input_what_if') }}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">What-if Query</a></center>
+    <a href="{{ url_for('main.query_input_how_to') }}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">How-to Query</a></center>
+  </div>
+
+  <!-- Navbar on small screens -->
+  <!-- <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
+    <a href="#" class="w3-bar-item w3-button w3-padding-large">Demo</a>
+    <a href="#" class="w3-bar-item w3-button w3-padding-large">Papers</a>
+    <a href="#" class="w3-bar-item w3-button w3-padding-large">Contact Us</a>
+  </div> -->
+</div>
+
+<!-- Header -->
+<br><br>
+<!-- First Grid -->
+<div class="w3-row-padding w3-padding-64 w3-container">
+  <div class="w3-content">
+    <div class="w3-center-align">
+      <h1 >Overview</h1>
+      <p class="w3-text-grey ">
+         What-if and How-to queries are fundamental data analysis questions that provide insights about the effects of a hypothetical update without actually making changes to the database. Traditional systems assume independence across different tuples and non-updated attributes of the database. However, different attributes and tuples are generally dependent in real-world scenarios. is a causality-based system that uses probabilistic contrastive counterfactuals for generating post-hoc explanations for black-box decision-making algorithms.
+         <br><br>
+        HypeR is a novel system to efficiently answer what-if and how-to queries while capturing causal dependencies among different attributes and tuples in the database. To compute the results, HypeR leverages a suite of optimizations along with techniques from causal inference to effectively estimate the answers. HypeR allows users to formulate complex hypothetical queries by using a novel SQL-like syntax and presents the output as interactive visualizations that can be explored and analyzed with ease. 
+      </p>
+    <br><br>
+
+      <h3>Papers:</h3> <a href="https://sainyamgalhotra.github.io/papers/HypeR_fullversion.pdf">HypeR: Hypothetical Reasoning With What-If and How-To Queries Using a Probabilistic Causal Approach.</a> </font> </b><br> Sainyam Galhotra*, Amir Gilad*, Sudeepa Roy, and Babak Salimi. SIGMOD 2022.
+     <br><br>
+    
+     <!--
+     <h3> 20min talk </h3>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/3G_rlwJC8Ns" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+     <br><br>
+     <h3> Demo Video </h3>
+     <iframe width="560" height="315" src="https://www.youtube.com/embed/ReeDCVezIN4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+    -->
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+ <a name="contact"></a> 
+<div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
+  <h3 class="w3-margin w3-large"> Contributors: <a href="https://oscargomezq.github.io/">Oscar Gomez</a>, <a href="https://sainyamgalhotra.github.io/">Sainyam Galhotra</a>, <a href="https://amirgilad.github.io/">Amir Gilad</a>, <a href="https://users.cs.duke.edu/~sudeepa/">Sudeepa Roy </a> and <a href="https://bsalimi.github.io/">Babak Salimi</a><br></h3>
+    <h3 class="w3-margin w3-large">Please reach out to any of the contributors if you have any questions. </h3>
+</div>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-W3SVBNVS4M"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-W3SVBNVS4M');
+</script>
+</body>
+</html>
