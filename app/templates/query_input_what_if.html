@@ -350,18 +350,18 @@
                     style="background-color: rgba(216, 216, 216, 0.548); width: 100px">
                     
                 <div style="display: inline;">
-                    {{form.update_const_vary_from(class="button", type="number", step='any', id="update_const",size="4",style="width: 100px;")}}
+                    {{form.update_const_vary_from(class="button", type="number", step='any', id="update_const_from",size="4",style="width: 100px;")}}
                 </div> 
             </div>
             <div class="span-col-5">
                 <input class="button-4" type="text" id="relview" name="relview" value="To" disabled
                 style="background-color: rgba(216, 216, 216, 0.548); width: 100px">
                 <div style="display: inline;">
-                    {{form.update_const_vary_to(class="button", type="number",step='any', id="update_const",size="4",style="width: 100px;")}}
+                    {{form.update_const_vary_to(class="button", type="number",step='any', id="update_const_to",size="4",style="width: 100px;")}}
                 </div>
             <div style="display: inline;">
                 
-                {{form.update_sign_vary(class="button", id="update_dropdown")}}
+                {{form.update_sign_vary(class="button", id="update_dropdown_sign")}}
             </div>
 
             <div style="display: inline;">
@@ -376,8 +376,24 @@
                     if(button == 'blank'){
                         document.getElementById('update_attr3').value = ""
                     }
-                    else{document.getElementById('update_attr3').value = "PRE("+button+")"}      
+                    else{
+                        localStorage.setItem('update_attr3_value', "PRE("+button+")");
+                        document.getElementById('update_attr3').value = "PRE("+button+")"}      
                 }
+            </script>
+            <script>
+                function getUpdateAttr3Value() {
+                    return localStorage.getItem('update_attr3_value') || '';
+                }
+
+                function setUpdateAttr3Value(value) {
+                    localStorage.setItem('update_attr3_value', value);
+                    document.getElementById('update_attr3').value = value;
+                }
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    setUpdateAttr3Value(getUpdateAttr3Value());
+                });
             </script>
         </div>
         <div class="span-col-5">
@@ -389,45 +405,6 @@
     </div>
 
         </div>
-                
-            {% else %}
-            <div class="span-col-5">
-                
-                {{form.update_attrs(class="button, myShowButton", id = 'ShowButton', onchange="stringChange()")}}
-
-            <div class='inline-text' style="display: inline;"> as </div>
-            <div style="display: inline;">
-                {{form.update_const(class="button", type="number", step="any", id="update_const", size="4",style="width: 100px;")}}
-
-            </div>
-            <div style="display: inline;">
-                {{ form.update_sign(class='button',id='update_dropdown')}}
-
-            </div>
-
-            <div style="display: inline;">
-                <input class="button" type="text" id="update_attr2" name="update_attr2" 
-                disabled style="background-color: rgba(216, 216, 216, 0.548); width: 120px">
-                 
-            </div>
-            <script>
-                function stringChange(){
-                    // var button = document.querySelector('.myShowButton')
-                    var button = document.getElementById('ShowButton').value
-                    if(button == 'blank'){
-                        document.getElementById('update_attr2').value = ""
-                    }
-                    else{document.getElementById('update_attr2').value = "PRE("+button+")"}      
-                }
-            </script>
-            
-        </div>
-        <div class="help-tip" id="help-tip-whatif2">
-            <p> Help Tip: example of vary update query</p>
-        </div>
-        
-        
-        {% endif %}
         <br>
         <!-- <div class="span-col-5"> -->
             For a subset that satisfies:
@@ -461,51 +438,175 @@
             </div>
             {{ form.sample_update(id='sample_update_button', class = 'button-4', style="background-color: rgba(130, 192, 128, 0.548); margin-left: 10px;") }}
         </div>
-        <!-- <script>
-            function populateUpdate() {
-                var updateSection = document.getElementById('update section');
-                var overallTab = document.getElementById('id_overall_tab');
-                var varyTab = document.getElementById('id_vary_updates_tab');
-                
-                // Determine which tab is currently active
-                var activeTab;
-                if (overallTab.classList.contains('active')) {
-                    activeTab = 'overall';
-                } else if (varyTab.classList.contains('active')) {
-                    activeTab = 'vary';
-                }
-                
-                // Populate dropdowns and textbox based on active tab
-                if (activeTab == 'overall') {
-                    // Populate dropdown and textbox for overall update
-                    // Replace dropdown and textbox IDs with the actual IDs in your form
-                    document.getElementById('id_update_attrs').value = '';
-                    document.getElementById('id_update_const').value = '1';
-                    document.getElementById('id_update_sign').value = 'increase';
-                    document.getElementById('update_attr2').value = 'PRE(example_attribute)';
-                } else if (activeTab == 'vary') {
-                    // Populate dropdowns and textbox for vary update
-                    // Replace dropdown and textbox IDs with the actual IDs in your form
-                    document.getElementById('id_update_attrs_vary').value = 'example_attribute';
-                    document.getElementById('id_update_const_vary_from').value = '1';
-                    document.getElementById('id_update_const_vary_to').value = '2';
-                    document.getElementById('id_update_sign_vary').value = 'increase';
-                    document.getElementById('update_attr3').value = 'PRE(example_attribute)';
-                }
-            }
-            
-            document.getElementById('id_sample_update').onclick = populateUpdate;
-            </script> -->
-            
-        <br>
         <script>
-            var original = document.getElementById('update section');
-            function AddMore(){
-                var clone = original.cloneNode(true); // "deep" clone
-    // or clone.id = ""; if the divs don't need an ID
-                original.parentNode.appendChild(clone);
-            }
+            // Get references to the textarea and the button
+            var textareaWhen = document.getElementById('when');
+            var updateAttr_dropdown = document.getElementById('ShowButton2')
+            var automaticUpdate = document.getElementById('update_attr3')
+            var updateConstFrom = document.getElementById('update_const_from')
+            var updateConstTo = document.getElementById('update_const_to')
+            var updateSign = document.getElementById('update_dropdown_sign')
+            var button = document.getElementById('sample_update_button');
+            
+
+            
+            // Add an event listener to the button
+            button.addEventListener('click', function() {
+                updateAttr_dropdown.value = 'price','POST(Price)'
+                automaticUpdate.value = "PRE(price)"
+                localStorage.setItem('update_attr3_value', "PRE(price)");
+                updateConstFrom.value = .2
+                updateConstTo.value = 1.2
+                updateSign.value = 'x','x'
+                // Set the value of the textarea to some sample data
+                textareaWhen.value = 'brand=\'Asus\'';
+            });
+            // add functionallity to output the graph(cached image)
         </script>
+
+
+
+            {% else %}
+            <div class="span-col-5">
+                
+                {{form.update_attrs(class="button, myShowButton", id = 'ShowButton', onchange="stringChange()")}}
+
+            <div class='inline-text' style="display: inline;"> as </div>
+            <div style="display: inline;">
+                {{form.update_const(class="button", type="number", step="any", id="update_constNum", size="4",style="width: 100px;")}}
+
+            </div>
+            <div style="display: inline;">
+                {{ form.update_sign(class='button',id='update_dropdown')}}
+
+            </div>
+
+            <div style="display: inline;">
+                <input class="button" type="text" id="update_attr2" name="update_attr2" 
+                disabled style="background-color: rgba(216, 216, 216, 0.548); width: 120px">
+                 
+            </div>
+            <script>
+                function stringChange(){
+                    // var button = document.querySelector('.myShowButton')
+                    var button = document.getElementById('ShowButton').value
+                    if(button == 'blank'){
+                        document.getElementById('update_attr2').value = ""
+                    }
+                    else{
+                        localStorage.setItem('update_attr2_value', "PRE("+button+")");
+                        document.getElementById('update_attr2').value = "PRE("+button+")"}      
+                }
+            </script>
+            <script>
+                function getUpdateAttr2Value() {
+                    return localStorage.getItem('update_attr2_value') || '';
+                }
+
+                function setUpdateAttr2Value(value) {
+                    localStorage.setItem('update_attr2_value', value);
+                    document.getElementById('update_attr2').value = value;
+                }
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    setUpdateAttr2Value(getUpdateAttr2Value());
+                });
+            </script>
+            
+        </div>
+        <div class="help-tip" id="help-tip-whatif2">
+            <p> Help Tip: example of vary update query</p>
+        </div>
+        
+        <br>
+        <!-- <div class="span-col-5"> -->
+            For a subset that satisfies:
+
+        <!-- </div> -->
+        
+
+        <div class="span-col-4" style="display: inline">
+            <div id="editor_WHEN"></div>
+            <textarea = name="when" id="when" style="display: none;">{{ form.when.data}}</textarea>
+                        
+            <script>
+                var editor_WHEN = ace.edit("editor_WHEN");
+                var whenarea_for = document.getElementById("when");
+                editor_WHEN.setTheme("ace/theme/xcode");
+                editor_WHEN.session.setMode("ace/mode/sql");
+                editor_WHEN.setOptions({
+                    // fontFamily: "tahoma",
+                    fontSize: "12pt"
+                });
+                editor_WHEN.getSession().setValue(whenarea_for.value);
+                editor_WHEN.getSession().on('change',function(){
+                    whenarea_for.value=editor_WHEN.getSession().getValue();
+                });
+            </script>
+        </div>
+        <br>
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div style="width: 100px; height: 50px;float: left;">
+                {{ form.run(class = 'button-4', style="background-color:#2196F3; color: #fff;")}}
+            </div>
+            {{ form.sample_update(id='sample_update_button2', class = 'button-4', style="background-color: rgba(130, 192, 128, 0.548); margin-left: 10px;") }}
+        </div>
+        <script>
+            // Get references to the textarea and the button
+            var textareaWhenUpdate = document.getElementById('when');
+            var updateAttr_dropdown = document.getElementById('ShowButton')
+            var automaticUpdate2 = document.getElementById('update_attr2')
+            var updateConst2 = document.getElementById('update_constNum')
+            var updateSign2 = document.getElementById('update_dropdown')
+            var button2 = document.getElementById('sample_update_button2');
+            
+            
+            // Add an event listener to the button
+            button2.addEventListener('click', function() {
+                updateAttr_dropdown.value = 'price','POST(Price)'
+                automaticUpdate2.value = "PRE(price)"
+                localStorage.setItem('update_attr2_value', "PRE(price)");
+                updateConst2.value = 1.2
+                updateSign2.value = 'x','x'
+                // Set the value of the textarea to some sample data
+                textareaWhenUpdate.value = 'brand=\'Asus\'';
+            });
+            // add functionallity to output the graph(cached image)
+        </script>
+        
+        {% endif %}
+        <!-- <br>
+
+            For a subset that satisfies:
+
+        
+
+        <div class="span-col-4" style="display: inline">
+            <div id="editor_WHEN"></div>
+            <textarea = name="when" id="when" style="display: none;">{{ form.when.data}}</textarea>
+                        
+            <script>
+                var editor_WHEN = ace.edit("editor_WHEN");
+                var whenarea_for = document.getElementById("when");
+                editor_WHEN.setTheme("ace/theme/xcode");
+                editor_WHEN.session.setMode("ace/mode/sql");
+                editor_WHEN.setOptions({
+                    // fontFamily: "tahoma",
+                    fontSize: "12pt"
+                });
+                editor_WHEN.getSession().setValue(whenarea_for.value);
+                editor_WHEN.getSession().on('change',function(){
+                    whenarea_for.value=editor_WHEN.getSession().getValue();
+                });
+            </script>
+        </div>
+        <br>
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div style="width: 100px; height: 50px;float: left;">
+                {{ form.run(class = 'button-4', style="background-color:#2196F3; color: #fff;")}}
+            </div>
+            {{ form.sample_update(id='sample_update_button', class = 'button-4', style="background-color: rgba(130, 192, 128, 0.548); margin-left: 10px;") }}
+        </div> -->
     </div>
     </div>
 
