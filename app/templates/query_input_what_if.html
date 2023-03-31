@@ -240,7 +240,11 @@
                 {{ form.run_relevant(class = 'button-4', style="background-color: rgba(27, 31, 35, 0.15);")}}
                 THIS LINE IS COMMENTED<button class="button-4" name = 'run_relevant' role="button" style="background-color: rgba(130, 192, 128, 0.548);">RUN RELEVANT VIEW</button>
             </div> -->
-
+            {% if error %}
+                <div class="alert alert-danger" role="alert" style="color: red; border: 1px solid red; padding: 10px;">
+                    {{ error }}
+                </div>
+            {% endif %}
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                 <div style="width: 100px; height: 50px;">
                     <div class="help-tip" id="help-tip-whatif">
@@ -315,7 +319,6 @@
                 });
             </script>
         </div> -->
-
   
  
         <div>
@@ -448,8 +451,6 @@
             var updateSign = document.getElementById('update_dropdown_sign')
             var button = document.getElementById('sample_update_button');
             
-
-            
             // Add an event listener to the button
             button.addEventListener('click', function() {
                 updateAttr_dropdown.value = 'price','POST(Price)'
@@ -463,8 +464,6 @@
             });
             // add functionallity to output the graph(cached image)
         </script>
-
-
 
             {% else %}
             <div class="span-col-5">

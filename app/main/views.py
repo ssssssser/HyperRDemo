@@ -331,6 +331,11 @@ df, le_dict = hyperAPI.convert_cate_features(df,cate_cols)
 def index():
     return render_template('index.html')
 
+# error handling
+# @main.errorhandler(500)
+# def server_error(error):
+#     return render_template('index.html'), 500
+
 @main.route('/bar_plot.png')
 def bar_plot_png():
     global attr_list, items
@@ -410,8 +415,12 @@ def query_input_what_if():
     #run_relevant = run aggregate query
     if 'run_relevant' in request.form:
         print('RUN Agg query')
-        
-        attr_list, items = get_relevant_table(form)
+        try:
+            attr_list, items = get_relevant_table(form)
+        except:
+            error_msg = "Bad input query, try the sample query"
+            return render_template('query_input_what_if.html', form=form, error=error_msg)
+            
         print(attr_list, "look here")
         attr_x = attr_list[1]
         attr_y = attr_list[0]
