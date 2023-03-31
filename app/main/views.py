@@ -36,12 +36,7 @@ vary_updates=False
 
 def get_relevant_table(form):
     conn = sqlite3.connect('data-dev.sqlite')
-    #print(form.use_table.data)
-    # if form.use_table.data == 'product':
-    #     query = 'SELECT * FROM amazon_product'
-    # elif form.use_table.data == 'review':
-    #     query = 'SELECT * FROM amazon_review'
-    # else:
+
     query = form.use.data
     print('query',query)
     cursor = conn.execute(query)
@@ -58,40 +53,15 @@ def get_relevant_table(form):
     conn.close()
     return attr_list,items
 
-###TO CHANGE: function get df for hyper function, change get data from sqlite
+
+#function get df for hyper function, change get data from sqlite
 def get_tuple():
     #conn = sqlite3.connect('data-dev.sqlite')
     #query = 'SELECT * FROM amazon_product, amazon_review WHERE amazon_product.pid = amazon_review.pid'
-
-    PATH_DATA = 'other/'
-    #df_prod = pd.read_csv("/Users/kayvon/Documents/School/UCSD/Hyper-Testing/Hyper_v4/HypeR_function/" + 'amazon_product_new.csv') #This should be replaced with any database given
-    # df_rev = pd.read_csv(PATH_DATA + 'amazon_rating_new.csv') #This should be replaced with any database given
-    #df_rev = pd.read_csv("/Users/kayvon/Documents/School/UCSD/Hyper-Testing/Hyper_v4/HypeR_function/" + 'amazon_rating_new.csv') #This should be replaced with any database given
-
-    # df_prod = pd.read_csv("HypeR_function/amazon_product_new.csv")
-    # df_rev = pd.read_csv("HypeR_function/amazon_rating_new.csv")
-
-    # #print(df_prod)
-    # #this needs to be automatic (find out what to do to make this automatic)
-    # df_prod["price"] = df_prod["price"].apply(hyperAPI.bucketize_price)
-    # df_prod["quality"] = df_prod["quality"].apply(hyperAPI.bucketize_quality)
-
-    # df_rev["rating"] = df_rev["rating"].apply(hyperAPI.bucketize_rating)
-
-    # df = pd.merge(df_prod,df_rev,left_on='pid', right_on='pid',how='inner')
-
-    # df = df.drop(columns=['pid','rid'])
-
-    # df = df.sample(n=1500, random_state=42)
-    df = pd.read_csv('HypeR_function/amazon_merge_new.csv')
-    #df = df.sample(n=500, random_state=42)
+    df = pd.read_csv('db/amazon_merge_smalldata.csv')
     return df
-    # row_index = 0  # the index of the row you want to extract
-    # tuple_example = df_prod.iloc[row_index:row_index+1] #could be changed for a slice of rows
-    # table=tuple_example.to_html()
-    # return table
 
-#helper function
+#helper function#not use now
 def get_updated_value(update_sign, update_attrs, update_const, df):
     if update_sign == 'add':
         after_update_val = df[update_attrs].mean() + update_const
@@ -121,7 +91,35 @@ def parse_sql_query(query):
             process_token(token)
 
     return results
-    
+
+#parse function for when and for vary update dropdown
+def parse_sql_query2(query):
+    parsed_query = sqlparse.parse(query)[0]
+    results = []
+
+    def process_token(token):
+        if isinstance(token, Identifier):
+            for child_token in token.tokens:
+                if isinstance(child_token, Function):
+                    function_name = child_token.get_name()
+                    attribute_name = child_token.get_parameters()[0].value
+                    attribute_name = attribute_name.split('.')[-1]
+                    results.append((function_name.upper(), attribute_name))
+                    break
+
+    for token in parsed_query.tokens:
+        if isinstance(token, IdentifierList):
+            for identifier in token.get_identifiers():
+                process_token(identifier)
+                # Add the identifier name to the results list
+                results.append(identifier.get_real_name())
+        if token.value.upper() == 'FROM':
+            break
+        else:
+            process_token(token)
+
+    return results
+
 #function used to split when and for conditions:
 def split_condition(data):
     #input: FOR/WHEN data from UI
@@ -139,6 +137,7 @@ def split_condition(data):
         return preval, prevallst_cate
     else:
         return [],[]
+
 
 def get_bar_plot(attr_x,attr_y,attr_list, items,isUpdate):
     print("hello")
@@ -368,6 +367,12 @@ def update_bar_plot_png():
     FigureCanvas(fig2).print_png(output)
     return Response(output.getvalue(), mimetype='image/png')
 
+
+# @main.route('/static/<path:path>')
+# def send_image(path):
+#     return send_from_directory('static', path)
+
+
 ###TODO: update the causal graph
 @main.route('/causal_graph_popup.jpg')
 def image():
@@ -377,7 +382,7 @@ def image():
 def query_input_what_if():
     form = InputWhatIfForm()
     print("we are in query input what if")
-    print(request.form)
+    #print(request.form)
     global RERUN, RERUN2
     global attr_list, items,score_ls
     global df, le_dict
@@ -405,6 +410,7 @@ def query_input_what_if():
     #run_relevant = run aggregate query
     if 'run_relevant' in request.form:
         print('RUN Agg query')
+        
         attr_list, items = get_relevant_table(form)
         print(attr_list, "look here")
         attr_x = attr_list[1]
@@ -426,10 +432,15 @@ def query_input_what_if():
         # return render_template('query_input_what_if.html', form=form,
         #     causal_graph=causal_graph, )
 
+        ###CHANGE: use new parse function, also get "category" and the value list of "category"
         query = form.use.data
-        update_button = parse_sql_query(query)
+        update_button = parse_sql_query2(query)[:-1]
         session['update_button'] = update_button
-  
+        dropdown_attr = update_button[0]
+        vary_dropdown = df[dropdown_attr].unique()
+        vary_dropdown = le_dict[update_button[0]].inverse_transform(vary_dropdown)
+        session['vary_dropdown'] = vary_dropdown
+        
     elif 'run' in request.form:
         start = time.time()
         print('RUN button')
@@ -443,7 +454,8 @@ def query_input_what_if():
 
         update_button = session.get('update_button', None)
 
-        q_type = update_button[0][0].lower()
+        q_type = update_button[1][0].lower()
+        AT = update_button[1][1].lower()
         #generate default_plot
 
         #update_attr_x = form.update_attrs.data
@@ -495,7 +507,7 @@ def query_input_what_if():
             #newdf = pd.DataFrame(newdf) 
             #obviously fix hardcoded parts
             #print('paramter:',df, le_dict, q_type,attr_x,preval,prevallst_cate,[],[],[update_attrs],update_sign,update_const,attr_y)
-            score_ls = hyperAPI.groupby_output(df, le_dict, q_type,attr_x,preval,prevallst_cate,[],[],[update_attrs],update_sign,update_const,attr_y)
+            score_ls = hyperAPI.groupby_output(df, le_dict, q_type,AT,preval,prevallst_cate,[],[],[update_attrs],update_sign,update_const,attr_y)
 
             print('scores are:', score_ls)
 
@@ -510,6 +522,8 @@ def query_input_what_if():
         #if show vary updates
         elif vary_updates == True:
             print('vary_updates == True')
+            vary_dropdown = session.get('vary_dropdown', None)
+
             #df = get_tuple()
             update_attrs_vary = request.form.get('update_attrs_vary')
             update_const_vary_from = float(request.form.get('update_const_vary_from'))
@@ -528,7 +542,7 @@ def query_input_what_if():
             when_data = request.form.get('when')
             preval,prevallst_cate = split_condition(when_data)
             #print(df,le_dict,q_type,attr_x,preval,prevallst_cate,[],[],[update_attrs_vary],update_sign_vary,update_const_val_ls)
-            score_ls = hyperAPI.vary_output(df,le_dict,q_type,attr_x,preval,prevallst_cate,[],[],[update_attrs_vary],update_sign_vary,update_const_val_ls)
+            score_ls = hyperAPI.vary_output(df,le_dict,q_type,AT,preval,prevallst_cate,[],[],[update_attrs_vary],update_sign_vary,update_const_val_ls)
             
             print('scores are:', score_ls)
             df_graph = pd.DataFrame(data=score_ls,columns=[update_attrs_vary,attr_x])
@@ -544,9 +558,9 @@ def query_input_what_if():
     elif 'overall' in request.form:
         #overall = True
         # session['overall'] = True
-         session['vary_updates'] = False
+        session['vary_updates'] = False
         # overall = session.get('overall', None)
-         vary_updates = session.get('vary_updates', None)
+        vary_updates = session.get('vary_updates', None)
     elif "vary_updates" in request.form:
         #overall=False       
         # session['overall'] = False

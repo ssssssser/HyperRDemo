@@ -389,24 +389,27 @@ def bucketize_quality(quality):
 def groupby_output(df,le_dict,q_type,AT,prelst,prevallst,postlst,postvallst,Ac,c_sign,c_const,group_attr):
     ### get outputs group by attribute
     #print(le_dict)
-    group_attr_vals = list(set(df[group_attr])) #already in numeric
-    le = le_dict[group_attr]
-    for i in range(len(prelst)):
-        pre = prelst[i]
-        preval_cate = prevallst[i]
-        if pre in le_dict.keys():
-            preval = le_dict[pre].transform([preval_cate])[0]
-            prevallst[i] = preval
-    print(group_attr_vals)
-    score_ls = []
-    for val in group_attr_vals:
-        score_val = get_weighted_avg_output(df,q_type,AT,prelst+[group_attr],prevallst+[val],postlst,postvallst,Ac,c_sign,c_const)
-        #score_val = get_query_output(df,q_type,AT,prelst,prevallst,postlst.append(group_attr),postvallst.append(val),Ac,c,g_Ac_lst,interference, blocks)#,{0:[1,2]})
-        #print(score_val)
-        val_name = le.classes_[val]
-        print(val_name)
-        score_ls.append([val_name,score_val])
-    return score_ls
+
+    
+        group_attr_vals = list(set(df[group_attr])) #already in numeric
+        le = le_dict[group_attr]
+        for i in range(len(prelst)):
+            pre = prelst[i]
+            preval_cate = prevallst[i]
+            if pre in le_dict.keys():
+                preval = le_dict[pre].transform([preval_cate])[0]
+                prevallst[i] = preval
+        print(group_attr_vals)
+        score_ls = []
+        for val in group_attr_vals:
+            score_val = get_weighted_avg_output(df,q_type,AT,prelst+[group_attr],prevallst+[val],postlst,postvallst,Ac,c_sign,c_const)
+            #score_val = get_query_output(df,q_type,AT,prelst,prevallst,postlst.append(group_attr),postvallst.append(val),Ac,c,g_Ac_lst,interference, blocks)#,{0:[1,2]})
+            #print(score_val)
+            val_name = le.classes_[val]
+            print(val_name)
+            score_ls.append([val_name,score_val])
+        return score_ls
+
 
 def vary_output(df,le_dict, q_type,AT,prelst,prevallst,postlst,postvallst,Ac,c_sign,const_ls):
 
