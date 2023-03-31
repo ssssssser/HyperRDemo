@@ -82,6 +82,12 @@ class InputWhatIfForm(FlaskForm):
         ('+','+'),
         ('x','x')
     ])
+
+    vary_dropdown = SelectField('vary-dropdown',choices=[('blank','')])
+
+    def set_vary_dropdown_choices(self, vary_dropdown):
+        self.vary_dropdown.choices = [('blank','')]+[(v, v) for v in vary_dropdown]
+
     '''
     for_attrs = SelectField('ForAttrs',choices=[
         ('rtng','Rtng'),

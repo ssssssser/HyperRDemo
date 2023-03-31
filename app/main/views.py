@@ -121,35 +121,6 @@ def parse_sql_query2(query):
 
     return results
 
-    
-#parse function for when and for vary update dropdown
-def parse_sql_query2(query):
-    parsed_query = sqlparse.parse(query)[0]
-    results = []
-
-    def process_token(token):
-        if isinstance(token, Identifier):
-            for child_token in token.tokens:
-                if isinstance(child_token, Function):
-                    function_name = child_token.get_name()
-                    attribute_name = child_token.get_parameters()[0].value
-                    attribute_name = attribute_name.split('.')[-1]
-                    results.append((function_name.upper(), attribute_name))
-                    break
-
-    for token in parsed_query.tokens:
-        if isinstance(token, IdentifierList):
-            for identifier in token.get_identifiers():
-                process_token(identifier)
-                # Add the identifier name to the results list
-                results.append(identifier.get_real_name())
-        if token.value.upper() == 'FROM':
-            break
-        else:
-            process_token(token)
-
-    return results
-
 #function used to split when and for conditions:
 def split_condition(data):
     #input: FOR/WHEN data from UI
@@ -325,10 +296,19 @@ update query has been added to the earlier function with a boolean isUpdate para
 
 def get_vary_update_bar_plot(df_graph, update_attrs_vary, attr_x):
     plt.figure(figsize=(8,4))
-    ax = sns.lineplot(data=df_graph,x = update_attrs_vary,y=attr_x, palette='Set2')
+    ax = sns.lineplot(data=df_graph,x = update_attrs_vary,y=attr_x, marker = 'o', palette='Set2')
     #out_filename = 'line_graph1.jpg'
     #plt.xlabel('Price (x)')
+    ax.set_xlabel('Updates of '+update_attrs_vary)
+    ax.set_ylabel(attr_x)
+    # if selected_value != 'blank':
+    #     ax.set_title(f'Vary updates view for group"{selected_value}"')
+    #ax.legend(title='Legend')
     fig = ax.get_figure()
+
+    # Add labels to data points
+    # for x, y in zip(df_graph[update_attrs_vary], df_graph[attr_x]):
+    #     ax.text(x, y, f'{y:.2f}', ha='center', va='bottom')
     fig.tight_layout()
     fig.savefig('app/static/line_graph.jpg', dpi=500)
     print("generate new graph")
@@ -467,15 +447,17 @@ def query_input_what_if():
         #     causal_graph=causal_graph, )
 
         query = form.use.data
-        update_button = parse_sql_query(query)
+        update_button = parse_sql_query2(query)
+
 
         session['update_button'] = update_button
+        #print('update_button',update_button)
         dropdown_attr = update_button[0]
         vary_dropdown = df[dropdown_attr].unique()
         if dropdown_attr in ['category','brand','color']:
             vary_dropdown = le_dict[dropdown_attr].inverse_transform(vary_dropdown)
-        session['vary_dropdown'] = vary_dropdown
-        
+        session['vary_dropdown'] = tuple(vary_dropdown)
+
     elif 'run' in request.form:
         start = time.time()
         print('RUN button')
@@ -489,7 +471,7 @@ def query_input_what_if():
 
         update_button = session.get('update_button', None)
 
-        q_type = update_button[0][0].lower()
+        q_type = update_button[1][0].lower()
         #generate default_plot
 
         #update_attr_x = form.update_attrs.data
@@ -569,7 +551,8 @@ def query_input_what_if():
                 update_const_vary_to = float(request.form.get('update_const_vary_to'))
 
                 update_sign_vary = request.form.get('update_sign_vary')
-
+                selected_value = request.form.get('vary_dropdown')
+                print('selected_value',selected_value.lower())
                 # after_update_val_from = get_updated_value(update_sign_vary, update_attrs_vary,update_const_vary_from,df)
                 # after_update_val_to = get_updated_value(update_sign_vary, update_attrs_vary,update_const_vary_to,df)
                 ###To Change:
@@ -585,7 +568,13 @@ def query_input_what_if():
             preval,prevallst_cate = split_condition(when_data)
             #print(df,le_dict,q_type,attr_x,preval,prevallst_cate,[],[],[update_attrs_vary],update_sign_vary,update_const_val_ls)
             try:
-                score_ls = hyperAPI.vary_output(df,le_dict,q_type,attr_x,preval,prevallst_cate,[],[],[update_attrs_vary],update_sign_vary,update_const_val_ls)
+                if selected_value != 'blank':
+                    dropdown_attr = update_button[0].lower()
+                    print('ADDDDD')
+                    #print(df,le_dict,q_type,attr_x,preval+[dropdown_attr],prevallst_cate+[selected_value],[],[],[update_attrs_vary],update_sign_vary,update_const_val_ls)
+                    score_ls = hyperAPI.vary_output(df,le_dict,q_type,attr_x,preval+[dropdown_attr],prevallst_cate+[selected_value],[],[],[update_attrs_vary],update_sign_vary,update_const_val_ls)
+                else:
+                    score_ls = hyperAPI.vary_output(df,le_dict,q_type,attr_x,preval,prevallst_cate,[],[],[update_attrs_vary],update_sign_vary,update_const_val_ls)
             except:
                 error_msg = "Bad vary update input, try the sample update"
                 return render_template('query_input_what_if.html', form=form, errorVary=error_msg)
@@ -637,7 +626,7 @@ def query_input_what_if():
         #items = session.get('items', None)
         #default_plot = session.get('items', None)
         #final_run = session.get('final_run',None)
-        
+        form.set_vary_dropdown_choices(session.get('vary_dropdown', ''))
         # return render_template('query_input_what_if.html', form = form,
         #     causal_graph=casual_graph, attr_list = attr_list, items = items, len_item = len(attr_list), default_plot = default_plot,final_run=final_run)
         return render_template('query_input_what_if.html', form = form, causal_graph=causal_graph, final_run=final_run, vary_updates=vary_updates, show_vary_updates = show_vary_updates,specConst= specConst)

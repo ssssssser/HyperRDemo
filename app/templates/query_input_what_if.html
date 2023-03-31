@@ -399,6 +399,21 @@
                 });
             </script>
         </div>
+
+        <div class = 'span-col-5'>
+            <input class="button-4" type="text" id="vary dropdown value" name="relview" value="Select a groupby value:" disabled
+            style="background-color: rgba(216, 216, 216, 0.548); width: 200px">
+            <!-- <select class = 'button' name="vary-dropdown" id="vary-dropdown"> -->
+                <!-- <option value="blank"></option> -->
+                <!-- {% for option in session['vary_dropdown'] %}
+                <option value="{{ option }}">{{ option }}</option>
+                {% endfor %} -->
+            <!-- </select> -->
+            <div style="display: inline;">
+                {{form.vary_dropdown(class="button", id="vary-dropdown")}}
+            </div>
+        </div>
+
         <div class="span-col-5">
             <div style="display: inline; float: left;">
             <div class="help-tip" id="help-tip-whatif2">
@@ -689,7 +704,9 @@
             {%- endif %}
 
             {%- if show_vary_updates -%}
-
+            <div class="bold_title">
+                Update Query View
+            </div>
             <!-- <div class="w3-container w3-cell"> -->
             <div id="bar-out-2">
                 <img id="bar" src="/static/line_graph.jpg" style="
