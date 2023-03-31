@@ -438,7 +438,7 @@ def query_input_what_if():
         session['update_button'] = update_button
         dropdown_attr = update_button[0]
         vary_dropdown = df[dropdown_attr].unique()
-        if dropdown_attr in le_dict.keys():
+        if dropdown_attr in ['category','brand','color']:
             vary_dropdown = le_dict[dropdown_attr].inverse_transform(vary_dropdown)
         session['vary_dropdown'] = vary_dropdown
         
