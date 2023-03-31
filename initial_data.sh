@@ -37,9 +37,9 @@ flask db upgrade
 ## initial records to database   
 sqlite3 data-dev.sqlite -cmd ".mode csv" \
 "delete from amazon_product" \
-".import db/amazon_product.csv amazon_product" \
+".import db/amazon_product_smalldata.csv amazon_product" \
 "delete from amazon_review" \
-".import db/amazon_review.csv amazon_review" \
+".import db/amazon_review_smalldata.csv amazon_review" \
 
 
 # username for log in is admin; password is 1234567

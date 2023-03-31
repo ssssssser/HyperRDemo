@@ -149,13 +149,13 @@ def get_bar_plot(attr_x,attr_y,attr_list, items,isUpdate):
     plt.figure(figsize=(8,4))
     #fig = Figure()
     #ax = fig.subplots()
-    #print(items)
     print(attr_list)
     print(items)
     print(df)
     ax = sns.barplot(x=attr_x, y=attr_y,
                     data=df,
-                    palette='Set2',
+                    #palette='Set2',
+                    color = "#00BFFF",
                     errwidth=0)
     #plt.xlabel('AVG(Rtng)')
     # plt.xlabel("Type")
@@ -226,10 +226,13 @@ def get_update_bar_plot(attr_x,attr_y,attr_list, items, score_ls):
     print(attr_list)
     print(items)
     #print(df)
+    colors = ["#00BFFF", "#FFA07A"]
     ax2 = sns.barplot(x=attr_y, y=attr_x,hue='type',
                     data=df_graph,
-                    palette='Set2',
+                    #palette='Set2',
+                    palette = colors,
                     errwidth=0)
+    
      # Move legend to the bottom
     handles, labels = ax2.get_legend_handles_labels()
     plt.legend(handles=handles[0:2], labels=labels[0:2],
