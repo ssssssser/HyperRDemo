@@ -143,6 +143,8 @@ class InputHowToForm(FlaskForm):
     use = TextAreaField('USE', default="")
     run_relevant = SubmitField('Run Aggregate Query',validators=None)
 
+    sample_query = SubmitField('Sample Query', validators=None)  # add sample query button
+
     #UPDATE part
     update_attrs = SelectField('UpdateAttrs',choices=[
         ('blank',''),
