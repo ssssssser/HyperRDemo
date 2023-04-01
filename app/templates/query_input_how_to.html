@@ -536,6 +536,48 @@
         </div>
 
         <div class="span-col-5">
+            <!-- The update range is limited (optional):
+            <br> -->
+            <div style="display: inline;">
+                {{form.update_attrs(class="button, myShowButton", id = 'ShowButton', onchange="stringChange()")}}
+            </div>
+            <input class="button" type="text" id="relview" name="relview" value="From" disabled
+                style="background-color: rgba(216, 216, 216, 0.548); width: 50px">
+            <div style="display: inline;">
+                <!-- <input class="button" type="number" id="update_const" name="update_const" size="4"
+                style="width: 100px;" > -->
+                {{form.update_const_from(class="button", type="number", step='any', id="update_const_from_how",size="4",style="width: 50px;")}}
+            </div> 
+            <input class="button" type="text" id="relview" name="relview" value="To" disabled
+            style="background-color: rgba(216, 216, 216, 0.548); width: 25px; ">
+            <div style="display: inline;">
+                <!-- <input class="button" type="number" id="update_const" name="update_const" size="4"
+                style="width: 100px;" >  -->
+                {{form.update_const_to(class="button", type="number", step='any', id="update_const_to_how",size="4",style="width: 50px;")}}
+            </div>
+            <div style="display: inline;">
+                <!-- <select class="button"  name="update_attribute" id="update_dropdown">
+                    <option value="blank"></option>
+                    <option value="product">x</option>
+                    <option value="review">+</option>
+                    <option value="rel_view">.</option>
+                </select> -->
+                {{ form.update_sign(class='button',id='update_dropdownHow')}}
+            </div>
+
+            <div style="display: inline;">
+            
+                    <!-- TODO KAYVON put input value such as PRE(Price)-->
+                <input class="button" type="text" id="update_attr2" name="update_attr2" 
+                disabled style="background-color: rgba(216, 216, 216, 0.548); width: 120px">
+                    
+            </div>
+        
+
+        
+            <!-- TODO KAYVON put input value such as 1.1-->
+        </div>
+        <div class="span-col-5">
             <div style="display: inline; float: left;">
                 <!-- <div class="help-tip" id="help-tip-whatif2">
                     <p> Help Tip: Specify the range of updated attribute</p>

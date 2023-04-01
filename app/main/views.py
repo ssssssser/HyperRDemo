@@ -712,7 +712,6 @@ def query_input_how_to():
             AT = update_button[0][1].lower()
 
         #df = get_tuple()
-<<<<<<< HEAD
         update_attr = request.form.get('update_attrs')
         print('update_attr_print',update_attr)
 
@@ -721,12 +720,6 @@ def query_input_how_to():
             update_const_from = float(update_const_from)
         else:
             update_const_from = None
-=======
-        try:
-            update_attr = request.form.get('update_attrs')
-            ###TODO: add function and make it work to generate table
-            update_const_from = request.form.get('update_const_from')
->>>>>>> 4318d1f49158ff1bbc165bfd364e7827542b0ab1
         
             if update_const_from:
                 update_const_from = float(update_const_from)
@@ -734,7 +727,11 @@ def query_input_how_to():
                 update_const_from = None
             
 
-            
+        try:
+            update_attr = request.form.get('update_attrs')
+            ###TODO: add function and make it work to generate table
+            update_const_from = request.form.get('update_const_from')
+               
             update_const_to = request.form.get('update_const_to')
             if update_const_to:
                 update_const_to = float(update_const_to)
@@ -769,25 +766,7 @@ def query_input_how_to():
         print('prevallst:',prevallst)
 
         start = time.time()
-<<<<<<< HEAD
         top_values, top_objectives = hyperAPI.optimization(df, le_dict, q_type, AT,preval,prevallst,[],[],[update_attr],update_sign,update_const_from, update_const_to) #can adjust binwidth
-=======
-        try:
-            top_values, top_objectives = hyperAPI.optimization(df, le_dict, q_type, AT,preval,prevallst,[],[],[update_attr],update_sign,update_const_from, update_const_to) #can adjust binwidth
-        except:
-            error_msg = "Bad update attribute input, try the sample update and sample constraint"
-            return render_template('query_input_how_to.html', form=form, errorConstraint=error_msg)
-
-        #data for table
-        # result_ls = [(400.0, 18.94405315528505),
-        #     (460.0, 18.94405315528505),
-        #     (520.0, 18.94405315528505),
-        #     (580.0, 18.94405315528505),
-        #     (640.0, 18.94405315528505)]
-        
-        #result_columns = [update_attrs, attr_x]
-        
->>>>>>> 4318d1f49158ff1bbc165bfd364e7827542b0ab1
         
         result_columns = ['Rank','To Value','New Objective Value']
         result_ls = []
