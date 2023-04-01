@@ -154,6 +154,25 @@ class InputHowToForm(FlaskForm):
     sample_constraint = SubmitField('Sample Constraint', validators=None)
 
     #UPDATE part
+    update_attrs2 = SelectField('UpdateAttrs2',choices=[
+        ('blank',''),
+        ('brand','POST(Brand)'),
+        ('price','POST(Price)'),
+        ('category','POST(Category)'),
+        ('quality','POST(Quality)'),
+        ('color','POST(Color)'),
+        ('ratng','POST(Rating)'),
+        ('senti','POST(senti)')
+    ])
+    #update_attrs = SelectField('UpdateAttrs', coerce=str)
+    update_const_from2 = FloatField('UpdateConst')
+    update_const_to2 = FloatField('UpdateConst')
+    update_sign2 = SelectField('UpdateSign', choices=[
+        ('+','+'),
+        ('x','x')
+    ])
+    #the meaning of "."
+    #UPDATE part
     update_attrs = SelectField('UpdateAttrs',choices=[
         ('blank',''),
         ('brand','POST(Brand)'),
@@ -171,7 +190,7 @@ class InputHowToForm(FlaskForm):
         ('+','+'),
         ('x','x')
     ])
-    #the meaning of "."
+    
 
     #OBJECTIVE part
     objective = SelectField('objective', choices=[

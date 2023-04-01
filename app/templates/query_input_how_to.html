@@ -535,25 +535,51 @@
             <!-- TODO KAYVON put input value such as 1.1-->
         </div>
 
+        <!-- Second update constraint! -->
+        <script>
+            function stringChange2(){
+                // var button = document.querySelector('.myShowButton')
+                var button = document.getElementById('ShowButton2').value
+                if(button == 'blank'){
+                    document.getElementById('update_attr3').value = ""
+                }
+                else{
+                    localStorage.setItem('update_attr3_value', "PRE("+button+")");
+                    document.getElementById('update_attr3').value = "PRE("+button+")"}      
+            }
+        </script>
+        <script>
+            function getUpdateAttr3Value() {
+                return localStorage.getItem('update_attr3_value') || '';
+            }
+
+            function setUpdateAttr3Value(value) {
+                localStorage.setItem('update_attr3_value', value);
+                document.getElementById('update_attr3').value = value;
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                setUpdateAttr3Value(getUpdateAttr3Value());
+            });
+        </script>
+        <!-- Second update constraint! -->
         <div class="span-col-5">
-            <!-- The update range is limited (optional):
-            <br> -->
             <div style="display: inline;">
-                {{form.update_attrs(class="button, myShowButton", id = 'ShowButton', onchange="stringChange()")}}
+                {{form.update_attrs2(class="button, myShowButton", id = 'ShowButton2', onchange="stringChange2()")}}
             </div>
             <input class="button" type="text" id="relview" name="relview" value="From" disabled
                 style="background-color: rgba(216, 216, 216, 0.548); width: 50px">
             <div style="display: inline;">
                 <!-- <input class="button" type="number" id="update_const" name="update_const" size="4"
                 style="width: 100px;" > -->
-                {{form.update_const_from(class="button", type="number", step='any', id="update_const_from_how",size="4",style="width: 50px;")}}
+                {{form.update_const_from2(class="button", type="number", step='any', id="update_const_from_how",size="4",style="width: 50px;")}}
             </div> 
             <input class="button" type="text" id="relview" name="relview" value="To" disabled
             style="background-color: rgba(216, 216, 216, 0.548); width: 25px; ">
             <div style="display: inline;">
                 <!-- <input class="button" type="number" id="update_const" name="update_const" size="4"
                 style="width: 100px;" >  -->
-                {{form.update_const_to(class="button", type="number", step='any', id="update_const_to_how",size="4",style="width: 50px;")}}
+                {{form.update_const_to2(class="button", type="number", step='any', id="update_const_to_how",size="4",style="width: 50px;")}}
             </div>
             <div style="display: inline;">
                 <!-- <select class="button"  name="update_attribute" id="update_dropdown">
@@ -562,13 +588,11 @@
                     <option value="review">+</option>
                     <option value="rel_view">.</option>
                 </select> -->
-                {{ form.update_sign(class='button',id='update_dropdownHow')}}
+                {{ form.update_sign2(class='button',id='update_dropdownHow')}}
             </div>
 
             <div style="display: inline;">
-            
-                    <!-- TODO KAYVON put input value such as PRE(Price)-->
-                <input class="button" type="text" id="update_attr2" name="update_attr2" 
+                <input class="button" type="text" id="update_attr3" name="update_attr3" 
                 disabled style="background-color: rgba(216, 216, 216, 0.548); width: 120px">
                     
             </div>
@@ -696,7 +720,7 @@
                                 <td>{{ result[0] }}</td>
                                 <td>{{ result[1] }}</td>
                                 <td>{{ result[2] }}</td>
-                                <!-- <td>{{ result[3] }}</td> -->
+                                <td>{{ result[3] }}</td>
                                 <!-- {% if loop.first %}
                                 <td rowspan="{{ result_ls|length }}">pre(prices)</td>
                                 <td rowspan="{{ result_ls|length }}">pre(rating)</td>

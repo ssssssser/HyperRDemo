@@ -729,9 +729,8 @@ def query_input_how_to():
 
         try:
             update_attr = request.form.get('update_attrs')
-            ###TODO: add function and make it work to generate table
             update_const_from = request.form.get('update_const_from')
-               
+
             update_const_to = request.form.get('update_const_to')
             if update_const_to:
                 update_const_to = float(update_const_to)
@@ -739,11 +738,32 @@ def query_input_how_to():
                 update_const_to = None
             
             update_sign = request.form.get('update_sign')
-            print('q_type',q_type)
-            print('AT',AT)
-            print('update_attr', update_attr)
-            print('update_const_from and to', update_const_from, update_const_to)
-            print('update_sign', update_sign)
+
+            update_attr2 = request.form.get('update_attrs2')
+            print('update_attr2',update_attr2)
+
+            if update_attr2 !='blank':
+                update_const_from2 = request.form.get('update_const_from2')
+                update_const_to2 = request.form.get('update_const_to2')
+                if update_const_to2:
+                    update_const_to2 = float(update_const_to2)
+                else:
+                    update_const_to2 = None
+                update_sign2 = request.form.get('update_sign2')
+                update_attr_ls = [update_attr,update_attr2]
+                update_const_from_ls = [update_const_from,update_const_from2]
+                update_const_to_ls = [update_const_to,update_const_to2]
+                update_sign_ls = [update_sign,update_sign2]
+            else:
+                update_attr_ls = [update_attr]
+                update_const_from_ls = [update_const_from]
+                update_const_to_ls = [update_const_to]
+                update_sign_ls = [update_sign]
+            print('update_attr_ls',update_attr_ls)
+            print('update_const_from_ls',update_const_from_ls)
+            print('update_const_to_ls',update_const_to_ls)
+            print('update_sign_ls',update_sign_ls)
+
         except:
             error_msg = "Bad update attribute input, try the sample update"
             return render_template('query_input_how_to.html', form=form, errorConstraint=error_msg)
@@ -762,16 +782,17 @@ def query_input_how_to():
         preval = when_preval+for_preval
         prevallst = when_prevallst_cate + for_prevallst_cate
         
-        print('preval:', preval)
-        print('prevallst:',prevallst)
+        #print('preval:', preval)
+        #print('prevallst:',prevallst)
 
         start = time.time()
-        top_values, top_objectives = hyperAPI.optimization(df, le_dict, q_type, AT,preval,prevallst,[],[],[update_attr],update_sign,update_const_from, update_const_to) #can adjust binwidth
         
-        result_columns = ['Rank','To Value','New Objective Value']
+        top_attrs, top_values, top_objectives = hyperAPI.optimization_multiple(df, le_dict, q_type, AT,preval,prevallst,[],[],update_attr_ls,update_sign_ls,update_const_from_ls, update_const_to_ls) #can adjust binwidth
+        
+        result_columns = ['Rank','Attributes','To Value','New Objective Value']
         result_ls = []
         for i in range(5):
-            result_i = [i+1,str(round(top_values[i],1))+update_sign+'PRE('+update_attr+')',round(top_objectives[i],4)]
+            result_i = [i+1,top_attrs[i], str(round(top_values[i],1))+update_sign+'PRE('+update_attr+')',round(top_objectives[i],4)]
             result_ls.append(result_i)
         
         end=time.time()
