@@ -250,9 +250,9 @@
                 {{ form.run_relevant(class = 'button-4', style="background-color: rgba(27, 31, 35, 0.15);")}}
                 THIS LINE IS COMMENTED<button class="button-4" name = 'run_relevant' role="button" style="background-color: rgba(130, 192, 128, 0.548);">RUN RELEVANT VIEW</button>
             </div> -->
-            {% if error %}
+            {% if errorHow %}
                 <div class="alert alert-danger" role="alert" style="color: red; border: 1px solid red; padding: 10px;">
-                    {{ error }}
+                    {{ errorHow }}
                 </div>
             {% endif %}
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
@@ -388,7 +388,7 @@
             <div class="span-col-4">
                 <div id="editor_FOR"></div>
                 <textarea name="for_condition" id="for" style="display: none;">{{ form.for_condition.data}}</textarea>
-                            
+            
                 <script>
                     var editor_FOR = ace.edit("editor_FOR");
                     editor_FOR.setTheme("ace/theme/xcode");
@@ -397,8 +397,41 @@
                         // fontFamily: "tahoma",
                         fontSize: "12pt"
                     });
+            
+                    // Set the value of the editor to the value of the for_condition field
+                    var textarea = document.getElementById("for");
+                    editor_FOR.getSession().setValue(textarea.value);
+                </script>
+                {% if errorObjective %}
+                <div class="alert alert-danger" role="alert" style="color: red; border: 1px solid red; padding: 10px;">
+                    {{ errorObjective }}
+                </div>
+            {% endif %}
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <div style="width: 100px; height: 50px;">
+                        <div class="help-tip" id="help-tip-whatif">
+                            <p> Help Tip: Group data by a attribute and aggregate the output attribute. The first attribute of table you got should be the groupby attribute, and the second attribute should be the output attribute</p>
+                        </div>
+                        <br>
+                    </div>
+                    {{ form.sample_objective(id='sample_update_objective', class = 'button-4', style="background-color: rgba(130, 192, 128, 0.548); margin-left: 10px;") }}
+                </div>
+            
+                <script>
+                    // Get references to the textarea and the button
+                    var textareaFor = document.getElementById('for');
+                    //could put in the dropdowns and set it, but it's already set by query??
+                    var buttonObjective = document.getElementById('sample_update_objective');
+            
+                    // Add an event listener to the button
+                    buttonObjective.addEventListener('click', function() {
+                        textareaFor.value = 'brand=\'Asus\'';
+                    });
+                    // add functionallity to output the graph(cached image)
                 </script>
             </div>
+            
+
         </div>
     
         <div>
@@ -440,8 +473,24 @@
                 if(button == 'blank'){
                     document.getElementById('update_attr2').value = ""
                 }
-                else{document.getElementById('update_attr2').value = "PRE("+button+")"}      
+                else{
+                    localStorage.setItem('update_attr2_value', "PRE("+button+")");
+                    document.getElementById('update_attr2').value = "PRE("+button+")"}      
             }
+        </script>
+        <script>
+            function getUpdateAttr2Value() {
+                return localStorage.getItem('update_attr2_value') || '';
+            }
+
+            function setUpdateAttr2Value(value) {
+                localStorage.setItem('update_attr2_value', value);
+                document.getElementById('update_attr2').value = value;
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                setUpdateAttr2Value(getUpdateAttr2Value());
+            });
         </script>
         <div class="span-col-5">
             <!-- The update range is limited (optional):
@@ -454,14 +503,14 @@
             <div style="display: inline;">
                 <!-- <input class="button" type="number" id="update_const" name="update_const" size="4"
                 style="width: 100px;" > -->
-                {{form.update_const_from(class="button", type="number", step='any', id="update_const",size="4",style="width: 50px;")}}
+                {{form.update_const_from(class="button", type="number", step='any', id="update_const_from_how",size="4",style="width: 50px;")}}
             </div> 
             <input class="button" type="text" id="relview" name="relview" value="To" disabled
             style="background-color: rgba(216, 216, 216, 0.548); width: 25px; ">
             <div style="display: inline;">
                 <!-- <input class="button" type="number" id="update_const" name="update_const" size="4"
                 style="width: 100px;" >  -->
-                {{form.update_const_to(class="button", type="number", step='any', id="update_const",size="4",style="width: 50px;")}}
+                {{form.update_const_to(class="button", type="number", step='any', id="update_const_to_how",size="4",style="width: 50px;")}}
             </div>
             <div style="display: inline;">
                 <!-- <select class="button"  name="update_attribute" id="update_dropdown">
@@ -470,7 +519,7 @@
                     <option value="review">+</option>
                     <option value="rel_view">.</option>
                 </select> -->
-                {{ form.update_sign(class='button',id='update_dropdown')}}
+                {{ form.update_sign(class='button',id='update_dropdownHow')}}
             </div>
 
             <div style="display: inline;">
@@ -488,17 +537,17 @@
 
         <div class="span-col-5">
             <div style="display: inline; float: left;">
-            <div class="help-tip" id="help-tip-whatif2">
-            <p> Help Tip: Specify the range of updated attribute</p>
-        </div>
-
-        </div>                
+                <!-- <div class="help-tip" id="help-tip-whatif2">
+                    <p> Help Tip: Specify the range of updated attribute</p>
+                 </div> -->
+    
+            </div>                
         
         <!-- WHEN ROW -->
-        <div>
-            <br>
-            For a subset that satisfies
-        </div>
+            <div>
+                <br>
+                For a subset that satisfies
+            </div>
         <!-- <div>
             <button class="button-4" role="button">+ WHEN</button>
         </div> -->
@@ -506,7 +555,6 @@
         <div class="span-col-4" style="display: inline">
             <div id="editor_WHEN"></div>
             <textarea name="when" id="when" style="display: none;">{{ form.when.data}}</textarea>
-                        
             <script>
                 var editor_WHEN = ace.edit("editor_WHEN");
                 var whenarea_for = document.getElementById("when");
@@ -521,41 +569,39 @@
                     whenarea_for.value=editor_WHEN.getSession().getValue();
                 });
             </script>
-        </div>
-        
             <br>
+            {% if errorConstraint %}
+            <div class="alert alert-danger" role="alert" style="color: red; border: 1px solid red; padding: 10px;">
+                {{ errorConstraint }}
+            </div>
+            {% endif %}
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div style="width: 100px; height: 50px;">
+                    <br>
+                    {{ form.run(class = 'button-4', style="background-color: rgba(27, 31, 35, 0.15);")}}
+                </div>
+                {{ form.sample_objective(id='sample_update_objective', class = 'button-4', style="background-color: rgba(130, 192, 128, 0.548); margin-left: 10px;") }}
+            </div>
         </div>
-        <!-- <div style="float: left; margin-top: 10px;">
-            <button class="button-4" name = 'run' role="button" style="background-color: rgba(27, 31, 35, 0.15);">RUN</button>
-        </div> -->
         
-        <!-- <div style="display: inline; float: right; margin-top: 10px;">
-            <button class="button-4" name = 'run' role="button" style="background-color: rgba(27, 31, 35, 0.15);">RUN</button>
-        </div> -->
-        <br>
-        <!-- no overall & vary_update for how-to query -->
-        <script>
-            var original = document.getElementById('update section');
-            function AddMore(){
-                var clone = original.cloneNode(true); // "deep" clone
-    // or clone.id = ""; if the divs don't need an ID
-                original.parentNode.appendChild(clone);
-            }
-        </script>
-    </div>
-    
+            <script>
+                // Add an event listener to the button
+                buttonConstraint.addEventListener('click', function() {
+                    updateAttr_dropdownHow.value = 'price','POST(Price)'
+                    automaticUpdateHow.value = "PRE(price)"
+                    localStorage.setItem('update_attr2_value', "PRE(price)");
+                    updateConstFromHow.value = .5
+                    updateConstToHow.value = 1.5
+                    updateSignHow.value = 'x','x'
+                    textareaWhenHow.value = 'brand=\'Asus\'';
+                });
+                // add functionallity to output the graph(cached image)
+            </script>
 
 
 
-        <div>
-        {{ form.run(class = 'button-4', style="background-color: rgba(27, 31, 35, 0.15);")}}
-        </div>
-        </div>  
-        
-    
-    
 
-    
+     
 
     <div class="output-grid">
 
@@ -674,3 +720,14 @@
 </body>
 </html>
 
+
+
+
+<!-- <script>
+    var original = document.getElementById('update section');
+    function AddMore(){
+    var clone = original.cloneNode(true); // "deep" clone
+// or clone.id = ""; if the divs don't need an ID
+    original.parentNode.appendChild(clone);
+    }
+</script> -->
