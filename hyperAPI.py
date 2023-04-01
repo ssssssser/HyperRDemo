@@ -345,7 +345,7 @@ def get_weighted_avg_output(df,q_type,AT,prelst,prevallst,postlst,postvallst,Ac,
         results = Parallel(n_jobs=5)(delayed(get_query_output)(df,q_type,AT,prelst,prevallst+[old_val],postlst,postvallst,Ac,[old_val+c_const]) for old_val, df_group in grouped_df)
     if c_sign=='x':
         results = Parallel(n_jobs=5)(delayed(get_query_output)(df,q_type,AT,prelst,prevallst+[old_val],postlst,postvallst,Ac,[old_val * c_const]) for old_val, df_group in grouped_df)
-    print (results)
+    #print (results)
     
     for old_val, df_group in grouped_df:
         #if c_sign == '+':
@@ -498,3 +498,76 @@ def optimization(df,le_dict, q_type, AT,prelst,prevallst,postlst,postvallst,Ac,c
     #print(df,q_type, AT,prelst,prevallst,postlst,postvallst,Ac,c_sign,c_from, c_to,bin_width)
     top_values, top_objectives = optimize_top_5_bucketized(df,q_type, AT,prelst,prevallst,postlst,postvallst,Ac,c_sign,c_from, c_to,bin_width)
     return top_values,top_objectives
+
+
+###for multiple:
+
+#the following two functions are how-to code based on current what-if code
+
+def optimize_top_5_bucketized_multiple(df,q_type, AT,prelst,prevallst,postlst,postvallst,Ac_list,c_sign_list,c_from_list, c_to_list, bin_width=0.1):
+    # Calculate number of bins based on range and bin width
+    total_bin = []
+    for i in range(len(Ac_list)):
+        num_bins = int(np.ceil((c_to_list[i] - c_from_list[i]) / bin_width))
+        # Create bins
+        bins = np.linspace(c_from_list[i], c_to_list[i], num_bins + 1)
+        for j in bins:
+            total_bin.append((Ac_list[i],j,c_sign_list[i]))
+    print("toal_bin",total_bin)
+    num_total_bin = len(total_bin)
+    # Define the problem
+    prob = pulp.LpProblem("Top5_C_Optimization_Bucketized", pulp.LpMaximize)
+
+    # Define variables
+    c_vars = [pulp.LpVariable(f"c_{i}", lowBound=0, upBound=1, cat="Binary") for i in range(num_total_bin)]
+
+    # Define the objective function
+    #AT_values = [get_weighted_avg_output(df, q_type, AT, prelst, prevallst, postlst, postvallst, [total_bin[i][0]], c_sign, total_bin[i][1]) for i in range(num_total_bin)]
+
+    AT_values = Parallel(n_jobs=-1)(delayed(get_weighted_avg_output)(df, q_type, AT, prelst, prevallst, postlst, postvallst, [total_bin[i][0]], total_bin[i][2], total_bin[i][1]) for i in range(num_total_bin))
+
+    # Define the objective function
+    prob += pulp.lpSum([c_vars[i] * AT_values[i] for i in range(num_total_bin)])
+
+    # Constraint: Only select 5 values of c
+    prob += pulp.lpSum(c_vars) == 5
+
+    # Constraint: Select values within range [c_from, c_to]
+    #prob += pulp.lpSum([c_vars[i] for i in range(num_total_bin) if bins[i] >= c_from and bins[i+1] <= c_to]) == 5
+
+    # Solve the problem
+    prob.solve()
+
+    # Get the top 5 values and corresponding objective values
+    attrs = []
+    values = []
+    objectives = []
+    for i in range(num_total_bin):
+        #if total_bin[i] >= c_from and bins[i+1] <= c_to:
+            #value = bins[i] + (bins[i+1] - bins[i])/2
+        print(total_bin[i])
+        attr = total_bin[i][0]
+        attrs.append(attr)
+        value = total_bin[i][1]
+        values.append(value)
+        objectives.append(AT_values[i] * c_vars[i].varValue)
+    top_indices = np.argsort(objectives)[-5:]
+    top_attrs = [attrs[i] for i in top_indices][::-1]
+    top_values = [values[i] for i in top_indices][::-1]
+    top_objectives = [objectives[i] for i in top_indices][::-1]
+
+    return top_attrs, top_values, top_objectives
+
+
+#how to code with category attributes
+def optimization_multiple(df,le_dict, q_type, AT,prelst,prevallst,postlst,postvallst,Ac_list,c_sign_list,c_from_list, c_to_list, bin_width=0.1):
+
+    ### get outputs group by attribute
+    
+    for i in range(len(prelst)):
+        pre = prelst[i]
+        preval_cate = prevallst[i]
+        if pre in le_dict.keys():
+            preval = le_dict[pre].transform([preval_cate])[0]
+            prevallst[i] = preval
+    return optimize_top_5_bucketized(df,q_type, AT,prelst,prevallst,postlst,postvallst,Ac_list,c_sign_list,c_from_list, c_to_list,bin_width)

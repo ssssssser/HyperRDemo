@@ -6,6 +6,7 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 from flask import render_template, request, redirect, url_for, make_response, current_app, flash, session, jsonify, Flask, send_file
+import json
 from .forms import InputWhatIfForm, InputHowToForm
 
 from . import main
@@ -706,7 +707,8 @@ def query_input_how_to():
 
         #df = get_tuple()
         update_attr = request.form.get('update_attrs')
-        ###TODO: add function and make it work to generate table
+        print('update_attr_print',update_attr)
+
         update_const_from = request.form.get('update_const_from')
         if update_const_from:
             update_const_from = float(update_const_from)
@@ -741,16 +743,6 @@ def query_input_how_to():
 
         start = time.time()
         top_values, top_objectives = hyperAPI.optimization(df, le_dict, q_type, AT,preval,prevallst,[],[],[update_attr],update_sign,update_const_from, update_const_to) #can adjust binwidth
-
-        #data for table
-        # result_ls = [(400.0, 18.94405315528505),
-        #     (460.0, 18.94405315528505),
-        #     (520.0, 18.94405315528505),
-        #     (580.0, 18.94405315528505),
-        #     (640.0, 18.94405315528505)]
-        
-        #result_columns = [update_attrs, attr_x]
-        
         
         result_columns = ['Rank','To Value','New Objective Value']
         result_ls = []
