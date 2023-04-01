@@ -513,7 +513,7 @@ def optimize_top_5_bucketized_multiple(df,q_type, AT,prelst,prevallst,postlst,po
         bins = np.linspace(c_from_list[i], c_to_list[i], num_bins + 1)
         for j in bins:
             total_bin.append((Ac_list[i],j,c_sign_list[i]))
-    print("toal_bin",total_bin)
+    #print("toal_bin",total_bin)
     num_total_bin = len(total_bin)
     # Define the problem
     prob = pulp.LpProblem("Top5_C_Optimization_Bucketized", pulp.LpMaximize)
@@ -545,7 +545,7 @@ def optimize_top_5_bucketized_multiple(df,q_type, AT,prelst,prevallst,postlst,po
     for i in range(num_total_bin):
         #if total_bin[i] >= c_from and bins[i+1] <= c_to:
             #value = bins[i] + (bins[i+1] - bins[i])/2
-        print(total_bin[i])
+        #print(total_bin[i])
         attr = total_bin[i][0]
         attrs.append(attr)
         value = total_bin[i][1]
@@ -570,4 +570,4 @@ def optimization_multiple(df,le_dict, q_type, AT,prelst,prevallst,postlst,postva
         if pre in le_dict.keys():
             preval = le_dict[pre].transform([preval_cate])[0]
             prevallst[i] = preval
-    return optimize_top_5_bucketized(df,q_type, AT,prelst,prevallst,postlst,postvallst,Ac_list,c_sign_list,c_from_list, c_to_list,bin_width)
+    return optimize_top_5_bucketized_multiple(df,q_type, AT,prelst,prevallst,postlst,postvallst,Ac_list,c_sign_list,c_from_list, c_to_list,bin_width)

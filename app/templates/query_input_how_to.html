@@ -414,10 +414,10 @@
                         </div>
                         <br>
                     </div>
-                    {{ form.sample_objective(id='sample_update_objective', class = 'button-4', style="background-color: rgba(130, 192, 128, 0.548); margin-left: 10px;") }}
+                    <!-- {{ form.sample_objective(id='sample_update_objective', class = 'button-4', style="background-color: rgba(130, 192, 128, 0.548); margin-left: 10px;") }} -->
                 </div>
             
-                <script>
+                <!-- <script>
                     // Get references to the textarea and the button
                     var textareaFor = document.getElementById('for');
                     //could put in the dropdowns and set it, but it's already set by query??
@@ -428,7 +428,7 @@
                         textareaFor.value = 'brand=\'Asus\'';
                     });
                     // add functionallity to output the graph(cached image)
-                </script>
+                </script> -->
             </div>
             
 
@@ -562,6 +562,7 @@
                 setUpdateAttr3Value(getUpdateAttr3Value());
             });
         </script>
+        <br>
         <!-- Second update constraint! -->
         <div class="span-col-5">
             <div style="display: inline;">
@@ -572,14 +573,14 @@
             <div style="display: inline;">
                 <!-- <input class="button" type="number" id="update_const" name="update_const" size="4"
                 style="width: 100px;" > -->
-                {{form.update_const_from2(class="button", type="number", step='any', id="update_const_from_how",size="4",style="width: 50px;")}}
+                {{form.update_const_from2(class="button", type="number", step='any', id="update_const_from_how2",size="4",style="width: 50px;")}}
             </div> 
             <input class="button" type="text" id="relview" name="relview" value="To" disabled
             style="background-color: rgba(216, 216, 216, 0.548); width: 25px; ">
             <div style="display: inline;">
                 <!-- <input class="button" type="number" id="update_const" name="update_const" size="4"
                 style="width: 100px;" >  -->
-                {{form.update_const_to2(class="button", type="number", step='any', id="update_const_to_how",size="4",style="width: 50px;")}}
+                {{form.update_const_to2(class="button", type="number", step='any', id="update_const_to_how2",size="4",style="width: 50px;")}}
             </div>
             <div style="display: inline;">
                 <!-- <select class="button"  name="update_attribute" id="update_dropdown">
@@ -588,7 +589,7 @@
                     <option value="review">+</option>
                     <option value="rel_view">.</option>
                 </select> -->
-                {{ form.update_sign2(class='button',id='update_dropdownHow')}}
+                {{ form.update_sign2(class='button',id='update_dropdownHow2')}}
             </div>
 
             <div style="display: inline;">
@@ -646,20 +647,42 @@
                     <br>
                     {{ form.run(class = 'button-4', style="background-color: rgba(27, 31, 35, 0.15);")}}
                 </div>
-                {{ form.sample_objective(id='sample_update_objective', class = 'button-4', style="background-color: rgba(130, 192, 128, 0.548); margin-left: 10px;") }}
+                {{ form.sample_constraint(id='sample_constraint', class = 'button-4', style="background-color: rgba(130, 192, 128, 0.548); margin-left: 10px;") }}
             </div>
         </div>
         
             <script>
+                // Get references to the textarea and the button
+                var textareaWhen = document.getElementById('when');
+                var updateAttr_dropdown = document.getElementById('ShowButton')
+                var automaticUpdate = document.getElementById('update_attr2')
+                var updateConstFrom = document.getElementById('update_const_from_how')
+                var updateConstTo = document.getElementById('update_const_to_how')
+                var updateSign = document.getElementById('update_dropdownHow')
+                var button = document.getElementById('sample_constraint')
+                // second constraint
+                var updateAttr_dropdown2 = document.getElementById('ShowButton2')
+                var automaticUpdate2 = document.getElementById('update_attr3')
+                var updateConstFrom2 = document.getElementById('update_const_from_how2')
+                var updateConstTo2 = document.getElementById('update_const_to_how2')
+                var updateSign2 = document.getElementById('update_dropdownHow2')
                 // Add an event listener to the button
-                buttonConstraint.addEventListener('click', function() {
-                    updateAttr_dropdownHow.value = 'price','POST(Price)'
-                    automaticUpdateHow.value = "PRE(price)"
+                button.addEventListener('click', function() {
+                    updateAttr_dropdown.value = 'price','POST(Price)'
+                    automaticUpdate.value = "PRE(price)"
                     localStorage.setItem('update_attr2_value', "PRE(price)");
-                    updateConstFromHow.value = .5
-                    updateConstToHow.value = 1.5
-                    updateSignHow.value = 'x','x'
-                    textareaWhenHow.value = 'brand=\'Asus\'';
+                    updateConstFrom.value = .9
+                    updateConstTo.value = 1.5
+                    updateSign.value = 'x','x'
+                    // second constraint
+                    updateAttr_dropdown2.value = 'quality','POST(Quality)'
+                    automaticUpdate2.value = "PRE(quality)"
+                    localStorage.setItem('update_attr3_value', "PRE(quality)");
+                    updateConstFrom2.value = 1.2
+                    updateConstTo2.value = 1.6
+                    updateSign2.value = 'x','x'
+                    // Set the value of the textarea to some sample data
+                    textareaWhen.value = 'brand=\'Asus\'';
                 });
                 // add functionallity to output the graph(cached image)
             </script>
@@ -667,7 +690,7 @@
 
 
 
-     
+    </div>
 
     <div class="output-grid">
 
@@ -732,46 +755,11 @@
                     </table>
                     
                 </div>
-
-                <div id="rel_view_table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Update Attribute</th>
-                                <th>To Value</th>
-                                <th>Old Objective Value</th>
-                                <th>New Objective Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-                    </table>
-                </div>
                 
 
                 
             <!-- </div> -->
             {%- endif %}
-
-            {%- if show_vary_updates -%}
-
-            <!-- <div class="w3-container w3-cell"> -->
-            <!-- <div id="bar-out-2">
-                <img id="bar" src="/static/line_graph1.jpg" style="
-                width: 400px;
-                height: 250px;
-                object-fit: contain;
-                display: block;
-                margin-left: auto;
-                margin-right: auto;
-                width: 50%;">
-            </div>
-             -->
-            <!-- </div> -->
-            {%- endif -%}
-
         <!-- </div> -->
        
     </div>

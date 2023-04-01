@@ -730,7 +730,10 @@ def query_input_how_to():
         try:
             update_attr = request.form.get('update_attrs')
             update_const_from = request.form.get('update_const_from')
-
+            if update_const_from:
+                update_const_from = float(update_const_from)
+            else:
+                update_const_from = None
             update_const_to = request.form.get('update_const_to')
             if update_const_to:
                 update_const_to = float(update_const_to)
@@ -744,6 +747,10 @@ def query_input_how_to():
 
             if update_attr2 !='blank':
                 update_const_from2 = request.form.get('update_const_from2')
+                if update_const_from2:
+                    update_const_from2 = float(update_const_from2)
+                else:
+                    update_const_from2 = None
                 update_const_to2 = request.form.get('update_const_to2')
                 if update_const_to2:
                     update_const_to2 = float(update_const_to2)
@@ -759,10 +766,6 @@ def query_input_how_to():
                 update_const_from_ls = [update_const_from]
                 update_const_to_ls = [update_const_to]
                 update_sign_ls = [update_sign]
-            print('update_attr_ls',update_attr_ls)
-            print('update_const_from_ls',update_const_from_ls)
-            print('update_const_to_ls',update_const_to_ls)
-            print('update_sign_ls',update_sign_ls)
 
         except:
             error_msg = "Bad update attribute input, try the sample update"
@@ -786,29 +789,24 @@ def query_input_how_to():
         #print('prevallst:',prevallst)
 
         start = time.time()
-        
-        top_attrs, top_values, top_objectives = hyperAPI.optimization_multiple(df, le_dict, q_type, AT,preval,prevallst,[],[],update_attr_ls,update_sign_ls,update_const_from_ls, update_const_to_ls) #can adjust binwidth
-        
+        try:
+        #print(df, le_dict, q_type, AT,preval,prevallst,[],[],update_attr_ls,update_sign_ls,update_const_from_ls, update_const_to_ls)
+            top_attrs, top_values, top_objectives = hyperAPI.optimization_multiple(df, le_dict, q_type, AT,preval,prevallst,[],[],update_attr_ls,update_sign_ls,update_const_from_ls, update_const_to_ls) #can adjust binwidth
+        except:
+            error_msg = "Bad update attribute input, try the sample update"
+            return render_template('query_input_how_to.html', form=form, errorConstraint=error_msg)
+        print(top_attrs, top_values, top_objectives)
         result_columns = ['Rank','Attributes','To Value','New Objective Value']
         result_ls = []
         for i in range(5):
-            result_i = [i+1,top_attrs[i], str(round(top_values[i],1))+update_sign+'PRE('+update_attr+')',round(top_objectives[i],4)]
+            result_i = [i+1,top_attrs[i], str(round(top_values[i],1))+update_sign+'PRE('+top_attrs[i]+')',round(top_objectives[i],4)]
             result_ls.append(result_i)
         
         end=time.time()
         print('time:',end-start)
-        # session['show_vary_updates']=True
-        # vary_updates = session.get('vary_updates', None)
-        # show_vary_updates = session.get('show_vary_updates', None)
-        #get_vary_update_bar_plot(df_graph, update_attrs_vary, attr_x)
-    
 
-        #get_update_bar_plot(update_attr_list[0],update_attr_list[1], update_attr_list, update_items,score_ls)
         session['final_run'] = True
-        #return a value that relays to output a certain graph with the run button
-        #attr_list = session.get('attr_list', None)
-        #items = session.get('items', None)
-        #default_plot = session.get('items', None)
+
         
         final_run = session.get('final_run',None)
        
