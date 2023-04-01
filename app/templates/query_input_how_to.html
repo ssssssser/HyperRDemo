@@ -271,13 +271,13 @@
 
         <script>
             // Get references to the textarea and the button
-            var textarea = document.getElementById('use');
-            var button = document.getElementById('sample_query_button');
+            var textareaQuery = document.getElementById('use');
+            var buttonQuery = document.getElementById('sample_query_button');
             
             // Add an event listener to the button
-            button.addEventListener('click', function() {
+            buttonQuery.addEventListener('click', function() {
                 // Set the value of the textarea to some sample data
-                textarea.value = 'SELECT T1.category, AVG(T2.rating) as rating \nFROM amazon_product AS T1, amazon_review as T2\nWHERE T1.pid = T2.pid\nGROUP BY T1.category';
+                textareaQuery.value = 'SELECT T1.category, AVG(T2.rating) as rating \nFROM amazon_product AS T1, amazon_review as T2\nWHERE T1.pid = T2.pid\nGROUP BY T1.category';
             });
             // add functionallity to output the graph(cached image)
         </script>
