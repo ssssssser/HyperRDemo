@@ -660,9 +660,15 @@ def query_input_how_to():
     #now it means run the aggregate query and plot
     #run_relevant = run aggregate query
     if 'run_relevant' in request.form:
-
-        attr_list, items = get_relevant_table(form)
+        try:
+            attr_list, items = get_relevant_table(form)
+        except:
+            error_msg = "Bad input query, try the sample query"
+            return render_template('query_input_how_to.html', form=form, errorHow=error_msg)
         print(attr_list, "look here")
+        if (attr_list==None or items == None):
+            error_msg = "Bad input query, try the sample query"
+            return render_template('query_input_how_to.html', form=form, errorHow=error_msg)
         #attr_x = attr_list[1]
         #attr_y = attr_list[0]
     
@@ -705,34 +711,45 @@ def query_input_how_to():
             AT = update_button[0][1].lower()
 
         #df = get_tuple()
-        update_attr = request.form.get('update_attrs')
-        ###TODO: add function and make it work to generate table
-        update_const_from = request.form.get('update_const_from')
-        if update_const_from:
-            update_const_from = float(update_const_from)
-        else:
-            update_const_from = None
+        try:
+            update_attr = request.form.get('update_attrs')
+            ###TODO: add function and make it work to generate table
+            update_const_from = request.form.get('update_const_from')
         
+            if update_const_from:
+                update_const_from = float(update_const_from)
+            else:
+                update_const_from = None
+            
 
-        
-        update_const_to = request.form.get('update_const_to')
-        if update_const_to:
-            update_const_to = float(update_const_to)
-        else:
-            update_const_to = None
-        
-        update_sign = request.form.get('update_sign')
-        print('q_type',q_type)
-        print('AT',AT)
-        print('update_attr', update_attr)
-        print('update_const_from and to', update_const_from, update_const_to)
-        print('update_sign', update_sign)
-
-        for_data = request.form.get('for_condition')
-        for_preval, for_prevallst_cate = split_condition(for_data)
-        when_data = request.form.get('when')
-        when_preval, when_prevallst_cate = split_condition(when_data)
-        
+            
+            update_const_to = request.form.get('update_const_to')
+            if update_const_to:
+                update_const_to = float(update_const_to)
+            else:
+                update_const_to = None
+            
+            update_sign = request.form.get('update_sign')
+            print('q_type',q_type)
+            print('AT',AT)
+            print('update_attr', update_attr)
+            print('update_const_from and to', update_const_from, update_const_to)
+            print('update_sign', update_sign)
+        except:
+            error_msg = "Bad update attribute input, try the sample update"
+            return render_template('query_input_how_to.html', form=form, errorConstraint=error_msg)
+        try:    
+            for_data = request.form.get('for_condition')
+            for_preval, for_prevallst_cate = split_condition(for_data)
+        except:
+            error_msg = "Bad update attribute input, try the sample update"
+            return render_template('query_input_how_to.html', form=form, errorObjective=error_msg)
+        try:    
+            when_data = request.form.get('when')
+            when_preval, when_prevallst_cate = split_condition(when_data)
+        except:
+            error_msg = "Bad update attribute input, try the sample update"
+            return render_template('query_input_how_to.html', form=form, errorConstraint=error_msg)
         preval = when_preval+for_preval
         prevallst = when_prevallst_cate + for_prevallst_cate
         
@@ -740,7 +757,11 @@ def query_input_how_to():
         print('prevallst:',prevallst)
 
         start = time.time()
-        top_values, top_objectives = hyperAPI.optimization(df, le_dict, q_type, AT,preval,prevallst,[],[],[update_attr],update_sign,update_const_from, update_const_to) #can adjust binwidth
+        try:
+            top_values, top_objectives = hyperAPI.optimization(df, le_dict, q_type, AT,preval,prevallst,[],[],[update_attr],update_sign,update_const_from, update_const_to) #can adjust binwidth
+        except:
+            error_msg = "Bad update attribute input, try the sample update and sample constraint"
+            return render_template('query_input_how_to.html', form=form, errorConstraint=error_msg)
 
         #data for table
         # result_ls = [(400.0, 18.94405315528505),

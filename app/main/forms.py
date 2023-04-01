@@ -151,6 +151,8 @@ class InputHowToForm(FlaskForm):
 
     sample_query = SubmitField('Sample Query', validators=None)  # add sample query button
 
+    sample_constraint = SubmitField('Sample Constraint', validators=None)
+
     #UPDATE part
     update_attrs = SelectField('UpdateAttrs',choices=[
         ('blank',''),
@@ -176,6 +178,8 @@ class InputHowToForm(FlaskForm):
         ('maximize','Maxmize'),
         ('minimize','minimize')
     ])
+
+    sample_objective = SubmitField('Sample Objective', validators=None)
 
     for_attrs = SelectField('ForAttrs',choices=[
         ('rtng','Rtng'),
@@ -237,7 +241,7 @@ class InputHowToForm(FlaskForm):
     
     
     
-    run = SubmitField('RUN')
+    run = SubmitField('Get Rankings') #change name
 
     overall = SubmitField('Overall Updates', validators=None)
     vary_updates = SubmitField('Vary Updates', validators=None)
