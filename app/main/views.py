@@ -800,7 +800,7 @@ def query_input_how_to():
         result_ls = []
         for i in range(5):
             result_i = [i+1,top_attrs[i], str(round(top_values[i],1))+update_sign+'PRE('+top_attrs[i]+')',round(top_objectives[i],4)]
-            result_ls.append(result_i)
+            result_ls.append(result_i
         
         end=time.time()
         print('time:',end-start)
