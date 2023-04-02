@@ -183,12 +183,13 @@
     <!-- INPUT GRID MIDDLE LEFT -->
     <div class="input_grid">
         <div>
-            <label>Choose Database</label>
+            <label>Database</label>
             <!-- <button class="button-4" role="button" disabled style="color:#EDEFF2: #929090;">Enter Aggregate Query Here:</button> -->
         </div>
         
         <div class="span-col-5">
-            {{ form.database(id='database', class = 'button',style='padding: 6px 16px') }}
+            <button style='padding: 6px 16px'> Amazon Product</button>
+            <!-- {{ form.database(id='database', class = 'button',style='padding: 6px 16px') }} -->
             <!-- <div style="display: inline; float: right;"> -->
                 <!-- {{ form.specify_constraints(class = 'button-4', role="button", style = "background-color: rgba(27, 31, 35, 0.15)")}} -->
                 <!-- <button type = 'submit' class="button-4" name = 'specify_constraints' role="button" style = "background-color: rgba(27, 31, 35, 0.15)">Specify Constraints</button> -->
@@ -590,7 +591,7 @@
                 updateAttr_dropdown.value = 'price','POST(Price)'
                 automaticUpdate2.value = "PRE(price)"
                 localStorage.setItem('update_attr2_value', "PRE(price)");
-                updateConst2.value = 1.2
+                updateConst2.value = 0.7
                 updateSign2.value = 'x','x'
                 // Set the value of the textarea to some sample data
                 textareaWhenUpdate.value = 'brand=\'Asus\'';

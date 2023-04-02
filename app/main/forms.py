@@ -141,7 +141,7 @@ class InputWhatIfForm(FlaskForm):
 class InputHowToForm(FlaskForm):
     database = SelectField('Database', choices = [
          ('amazon_product','Amazon Product'),
-         ('adult_income','Adult Income'),
+        #  ('adult_income','Adult Income'),
     ])
     #base_tables = SubmitField('BaseTables',validators=None)
 
