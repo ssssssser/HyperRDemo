@@ -128,7 +128,7 @@ def split_condition(data):
     #output: attr_list and attr_val_list
     if data:
         data = data.split('AND')
-        print(data)
+        #print(data)
         preval = []
         prevallst_cate = []
         for i in data:
@@ -141,17 +141,15 @@ def split_condition(data):
         return [],[]
 
 def get_bar_plot(attr_x,attr_y,attr_list, items,isUpdate):
-    print("hello")
+    #print("hello")
     df = pd.DataFrame(columns = attr_list,data=items)
-    
     sns.set(style="darkgrid", font_scale=2)
-
     plt.figure(figsize=(8,4))
     #fig = Figure()
     #ax = fig.subplots()
-    print(attr_list)
-    print(items)
-    print(df)
+    #print(attr_list)
+    #print(items)
+    #print(df)
     ax = sns.barplot(x=attr_x, y=attr_y,
                     data=df,
                     #palette='Set2',
@@ -213,10 +211,7 @@ def get_update_bar_plot(attr_x,attr_y,attr_list, items, score_ls):
     df_graph2 = pd.DataFrame(columns=attr_list,data=score_ls)
     df_graph2['type'] = 'POST'
     df_graph = df_graph.append(df_graph2)
-    print('df_graph here:',df_graph)
-   
-
-    
+    #print('df_graph here:',df_graph)
     sns.set(style="darkgrid", font_scale=2)
 
     plt.figure(figsize=(8,4))
@@ -269,7 +264,7 @@ def get_update_bar_plot(attr_x,attr_y,attr_list, items, score_ls):
     fig2 = ax2.get_figure()
     fig2.tight_layout()
     fig2.savefig('app/static/update_bar_graph.jpg', dpi=500)
-    print("generate new graph complete!!!!!!!!")
+    #print("generate new graph complete!!!!!!!!")
     return fig2
     # plt.close(fig)    
     #fig.show()
@@ -353,20 +348,21 @@ def bar_plot_png():
     #print(attr_list, "look here")
     attr_x = attr_list[1]
     attr_y = attr_list[0]
-    print('run sub function:'+str(attr_x))
+    #print('run sub function:'+str(attr_x))
     #form = InputWhatIfForm()
     #if 'run_relevant' in request.form:
-    print('RUN Agg query')
-    print(attr_x,attr_y,attr_list,items)
+    #print('RUN Agg query')
+    #print(attr_x,attr_y,attr_list,items)
     fig = get_bar_plot(attr_x, attr_y, attr_list, items,False)
     output = io.BytesIO()
     FigureCanvas(fig).print_png(output)
     return Response(output.getvalue(), mimetype='image/png')
 
+#not use now
 @main.route('/update_bar_plot.png')
 def update_bar_plot_png():
     global attr_list, items, score_ls
-    print('what is attr_list:', attr_list)
+    #print('what is attr_list:', attr_list)
     #attr_list, items = get_relevant_table(form)
     #print(attr_list, "look here")
     attr_x = attr_list[1]
@@ -374,15 +370,14 @@ def update_bar_plot_png():
     #print('run sub function:'+str(attr_x))
     #form = InputWhatIfForm()
     #if 'run_relevant' in request.form:
-    print('RUN update query plot')
+    #print('RUN update query plot')
     fig2 = get_update_bar_plot(attr_x, attr_y, attr_list, items,score_ls)
-    print('break?')
+    #print('break?')
     output = io.BytesIO()
-    print('break?')
+    #print('break?')
     FigureCanvas(fig2).print_png(output)
     return Response(output.getvalue(), mimetype='image/png')
 
-###TODO: update the causal graph
 @main.route('/causal_graph_popup.jpg')
 def image():
     return send_file('static/causal_graph_new.jpg')
@@ -427,7 +422,7 @@ def query_input_what_if():
         if (attr_list==None or items == None):
             error_msg = "Bad input query, try the sample query"
             return render_template('query_input_what_if.html', form=form, error=error_msg)
-        print(attr_list, "look here")
+        #print(attr_list, "look here")
         attr_x = attr_list[1]
         attr_y = attr_list[0]
     
@@ -438,7 +433,7 @@ def query_input_what_if():
         session['attr_list']=attr_list
         session['items'] = items
         # session['default_plot'] = True 
-        print("session attr list:",session['attr_list'])
+        #print("session attr list:",session['attr_list'])
         
         session['causal_graph'] = True #when run the aggregate query, generate a default bar plot(automatically choose the)
         causal_graph = session.get('causal_graph', None)
@@ -449,7 +444,6 @@ def query_input_what_if():
 
         query = form.use.data
         update_button = parse_sql_query2(query)
-
 
         session['update_button'] = update_button
         #print('update_button',update_button)
@@ -473,6 +467,7 @@ def query_input_what_if():
         update_button = session.get('update_button', None)
 
         q_type = update_button[1][0].lower()
+        target_attr = update_button[1][1].lower()
         #generate default_plot
 
         #update_attr_x = form.update_attrs.data
@@ -508,15 +503,15 @@ def query_input_what_if():
             preval,prevallst_cate = split_condition(when_data)
             #print('preval:',preval)
             #print('prevallst:',prevallst_cate)
-            print("over here pal")
+            #print("over here pal")
             #check if data on price and quality is okay??
             #print(df) #good (gives the whole merged database bucketized)
-            print(attr_x) #this rtng(i want this as "rating")
-            print(preval) #['brand']
-            print(prevallst_cate) #['"Asus"'] we don't use this??
-            print(update_attrs) #price
-            print(update_const) #1.2 (i.e pre price (*)(+) 1.2)
-            print(update_sign)
+            #print(attr_x) #this rtng(i want this as "rating")
+            #print(preval) #['brand']
+            #print(prevallst_cate) #['"Asus"'] we don't use this??
+            #print(update_attrs) #price
+            #print(update_const) #1.2 (i.e pre price (*)(+) 1.2)
+            #print(update_sign)
             
             #obviously need to be changed to not be hardcoded
             # cate_cols = ['category','brand','color'] 
@@ -528,7 +523,7 @@ def query_input_what_if():
             #obviously fix hardcoded parts
             #print('paramter:',df, le_dict, q_type,attr_x,preval,prevallst_cate,[],[],[update_attrs],update_sign,update_const,attr_y)
             try:
-                score_ls = hyperAPI.groupby_output(df, le_dict, q_type,attr_x,preval,prevallst_cate,[],[],[update_attrs],update_sign,update_const,attr_y)
+                score_ls = hyperAPI.groupby_output(df, le_dict, q_type,target_attr,preval,prevallst_cate,[],[],[update_attrs],update_sign,update_const,attr_y)
             except:
                 error_msg = "Bad update attribute input, try the sample update"
                 return render_template('query_input_what_if.html', form=form, errorUpdate=error_msg)
@@ -573,9 +568,9 @@ def query_input_what_if():
                     dropdown_attr = update_button[0].lower()
                     print('ADDDDD')
                     #print(df,le_dict,q_type,attr_x,preval+[dropdown_attr],prevallst_cate+[selected_value],[],[],[update_attrs_vary],update_sign_vary,update_const_val_ls)
-                    score_ls = hyperAPI.vary_output(df,le_dict,q_type,attr_x,preval+[dropdown_attr],prevallst_cate+[selected_value],[],[],[update_attrs_vary],update_sign_vary,update_const_val_ls)
+                    score_ls = hyperAPI.vary_output(df,le_dict,q_type,target_attr,preval+[dropdown_attr],prevallst_cate+[selected_value],[],[],[update_attrs_vary],update_sign_vary,update_const_val_ls)
                 else:
-                    score_ls = hyperAPI.vary_output(df,le_dict,q_type,attr_x,preval,prevallst_cate,[],[],[update_attrs_vary],update_sign_vary,update_const_val_ls)
+                    score_ls = hyperAPI.vary_output(df,le_dict,q_type,target_attr,preval,prevallst_cate,[],[],[update_attrs_vary],update_sign_vary,update_const_val_ls)
             except:
                 error_msg = "Bad vary update input, try the sample update"
                 return render_template('query_input_what_if.html', form=form, errorVary=error_msg)
@@ -607,7 +602,7 @@ def query_input_what_if():
         print('sucess')
         vary_updates = session.get('vary_updates', None)
         show_vary_updates = session.get('show_vary_updates', None)
-        print(show_vary_updates)
+        #print(show_vary_updates)
 
 
     elif "specify_constraints" in request.form:
@@ -666,7 +661,7 @@ def query_input_how_to():
         except:
             error_msg = "Bad input query, try the sample query"
             return render_template('query_input_how_to.html', form=form, errorHow=error_msg)
-        print(attr_list, "look here")
+        #print(attr_list, "look here")
         if (attr_list==None or items == None):
             error_msg = "Bad input query, try the sample query"
             return render_template('query_input_how_to.html', form=form, errorHow=error_msg)
@@ -680,7 +675,7 @@ def query_input_how_to():
         session['attr_list']=attr_list
         session['items'] = items
         # session['default_plot'] = True 
-        print("session attr list:",session['attr_list'])
+        #print("session attr list:",session['attr_list'])
         
         session['causal_graph'] = True #when run the aggregate query, generate a default bar plot(automatically choose the)
         causal_graph = session.get('causal_graph', None)
@@ -694,8 +689,6 @@ def query_input_how_to():
         query = form.use.data
         update_button = parse_sql_query(query) #update_button[0][0]='AVG', update_buytton[0][1] = 'rating'
         session['update_button'] = update_button
-    
-
     
     elif 'run' in request.form:
         print('RUN button')
@@ -713,7 +706,7 @@ def query_input_how_to():
 
         #df = get_tuple()
         update_attr = request.form.get('update_attrs')
-        print('update_attr_print',update_attr)
+        #print('update_attr_print',update_attr)
 
         update_const_from = request.form.get('update_const_from')
         if update_const_from:
@@ -743,7 +736,7 @@ def query_input_how_to():
             update_sign = request.form.get('update_sign')
 
             update_attr2 = request.form.get('update_attrs2')
-            print('update_attr2',update_attr2)
+            #print('update_attr2',update_attr2)
 
             if update_attr2 !='blank':
                 update_const_from2 = request.form.get('update_const_from2')
