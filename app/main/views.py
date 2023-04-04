@@ -771,6 +771,8 @@ def query_input_how_to():
         try:    
             for_data = request.form.get('for_condition')
             for_preval, for_prevallst_cate = split_condition(for_data)
+            print('for_data', for_data)
+            print('for_preval', for_preval,for_prevallst_cate)
         except:
             error_msg = "Bad update attribute input, try the sample update"
             return render_template('query_input_how_to.html', form=form, errorObjective=error_msg)
@@ -783,8 +785,8 @@ def query_input_how_to():
         preval = when_preval+for_preval
         prevallst = when_prevallst_cate + for_prevallst_cate
         
-        #print('preval:', preval)
-        #print('prevallst:',prevallst)
+        print('preval:', preval)
+        print('prevallst:',prevallst)
 
         start = time.time()
         try:

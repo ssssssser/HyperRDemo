@@ -194,8 +194,8 @@ class InputHowToForm(FlaskForm):
 
     #OBJECTIVE part
     objective = SelectField('objective', choices=[
-        ('maximize','Maxmize'),
-        ('minimize','minimize')
+        ('maximize','Maxmize')
+        # ('minimize','minimize')
     ])
 
     sample_objective = SubmitField('Sample Objective', validators=None)
@@ -240,7 +240,7 @@ class InputHowToForm(FlaskForm):
     #need to add: PRE(xxx)
     #need to add: +WHEN function
     when = TextAreaField('WHEN', default="")
-    for_condition = TextAreaField('FOR', default="")
+    for_condition = TextAreaField('FOR_CONDITION', default="")
 
     #dropdown menu field for placeholder query
     #OUTPUT part
