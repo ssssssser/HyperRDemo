@@ -9,7 +9,7 @@ from wtforms.fields import DateField
 class InputWhatIfForm(FlaskForm):
     database = SelectField('Database', choices = [
          ('amazon_product','Amazon Product'),
-         ('adult_income','Adult Income'),
+        #  ('adult_income','Adult Income'),
     ])
     base_tables = SubmitField('BaseTables',validators=None)
 
@@ -47,11 +47,11 @@ class InputWhatIfForm(FlaskForm):
     #overall update
     update_attrs = SelectField('UpdateAttrs',choices=[
         ('blank',''),
-        ('brand','POST(Brand)'),
+        # ('brand','POST(Brand)'),
         ('price','POST(Price)'),
-        ('category','POST(Category)'),
+        # ('category','POST(Category)'),
         ('quality','POST(Quality)'),
-        ('color','POST(Color)'),
+        # ('color','POST(Color)'),
         ('ratng','POST(Rtng)'),
         ('senti','POST(Senti)')
     ])
@@ -67,11 +67,11 @@ class InputWhatIfForm(FlaskForm):
         #overall update
     update_attrs_vary = SelectField('UpdateAttrs',choices=[
         ('blank',''),
-        ('brand','POST(Brand)'),
+        # ('brand','POST(Brand)'),
         ('price','POST(Price)'),
-        ('category','POST(Category)'),
+        # ('category','POST(Category)'),
         ('quality','POST(Quality)'),
-        ('color','POST(Color)'),
+        # ('color','POST(Color)'),
         ('ratng','POST(Rtng)'),
         ('senti','POST(Senti)')
     ])
@@ -156,11 +156,11 @@ class InputHowToForm(FlaskForm):
     #UPDATE part
     update_attrs2 = SelectField('UpdateAttrs2',choices=[
         ('blank',''),
-        ('brand','POST(Brand)'),
+        # ('brand','POST(Brand)'),
         ('price','POST(Price)'),
-        ('category','POST(Category)'),
+        # ('category','POST(Category)'),
         ('quality','POST(Quality)'),
-        ('color','POST(Color)'),
+        # ('color','POST(Color)'),
         ('ratng','POST(Rating)'),
         ('senti','POST(senti)')
     ])
@@ -175,11 +175,11 @@ class InputHowToForm(FlaskForm):
     #UPDATE part
     update_attrs = SelectField('UpdateAttrs',choices=[
         ('blank',''),
-        ('brand','POST(Brand)'),
+        # ('brand','POST(Brand)'),
         ('price','POST(Price)'),
-        ('category','POST(Category)'),
+        # ('category','POST(Category)'),
         ('quality','POST(Quality)'),
-        ('color','POST(Color)'),
+        # ('color','POST(Color)'),
         ('ratng','POST(Rating)'),
         ('senti','POST(senti)')
     ])

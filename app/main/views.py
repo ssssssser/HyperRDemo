@@ -458,16 +458,20 @@ def query_input_what_if():
         print('RUN button')
         
         #print(attr_list)
-        update_attr_list = session['attr_list']
-        update_items = session['items']
-        #print(update_attr_list)
-        attr_x = update_attr_list[1]
-        attr_y = update_attr_list[0]
+        try:
+            update_attr_list = session['attr_list']
+            update_items = session['items']
+            #print(update_attr_list)
+            attr_x = update_attr_list[1]
+            attr_y = update_attr_list[0]
 
-        update_button = session.get('update_button', None)
-
-        q_type = update_button[1][0].lower()
-        target_attr = update_button[1][1].lower()
+            update_button = session.get('update_button', None)
+            
+            q_type = update_button[1][0].lower()
+            target_attr = update_button[1][1].lower()
+        except:
+            error_msg = "Bad update attribute input, try the sample update"
+            return render_template('query_input_what_if.html', form=form, errorUpdate=error_msg)
         #generate default_plot
 
         #update_attr_x = form.update_attrs.data
@@ -687,12 +691,13 @@ def query_input_how_to():
 
         ###TODO: let `avg` and `rating` button change with query input
         query = form.use.data
-        update_button = parse_sql_query(query) #update_button[0][0]='AVG', update_buytton[0][1] = 'rating'
-        session['update_button'] = update_button
+        update_button2 = parse_sql_query(query) #update_button[0][0]='AVG', update_buytton[0][1] = 'rating'
+        print('update_button',update_button2)
+        session['update_button2'] = update_button2
     
     elif 'run' in request.form:
         print('RUN button')
-        update_button = session.get('update_button', None)
+        update_button2 = session.get('update_button2', None)
         #print('update_button',update_button)
         #update_attr_list = session['attr_list']
         #update_items = session['items']
@@ -700,9 +705,9 @@ def query_input_how_to():
         #attr_x is the objective variable
         #attr_x = update_attr_list[1]
         #attr_y = update_attr_list[0]
-        if update_button:
-            q_type = update_button[0][0].lower()
-            AT = update_button[0][1].lower()
+        if update_button2:
+            q_type = update_button2[0][0].lower()
+            AT = update_button2[0][1].lower()
 
         #df = get_tuple()
         update_attr = request.form.get('update_attrs')
@@ -817,8 +822,8 @@ def query_input_how_to():
         
         # return render_template('query_input_what_if.html', form = form,
         #     causal_graph=casual_graph, attr_list = attr_list, items = items, len_item = len(attr_list), default_plot = default_plot,final_run=final_run)
-        update_button = session.get('update_button',[])
-        return render_template('query_input_how_to.html', form = form, causal_graph = causal_graph, final_run=final_run, result_columns=result_columns, result_ls = result_ls, update_button=update_button)
+        update_button2 = session.get('update_button2',[])
+        return render_template('query_input_how_to.html', form = form, causal_graph = causal_graph, final_run=final_run, result_columns=result_columns, result_ls = result_ls, update_button2=update_button2)
     else:
         print('wrong')
         return render_template('query_input_how_to.html', form = form)
