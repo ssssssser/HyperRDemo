@@ -4,17 +4,17 @@
 <style>
     /* Style the popup container */
     #popup {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        border: 5px solid #ccc;
-        box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.3);
-        background-color: #fff;
-        z-index: 100;
-        padding: 20px;
-      }
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 66%;
+    transform: translate(-50%, -50%);
+    border: 5px solid #ccc;
+    box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.3);
+    background-color: #fff;
+    z-index: 9999999; /* changed from 100 to 1000 */
+    padding: 20px;
+}
 
       /* Style the popup image */
       #popup img {
@@ -123,7 +123,7 @@
       <div id="popup">
         <img id="popup-image" src="/static/causal_graph_new.jpg" alt="Image">
         <button onclick="hidePopup()">Close</button>
-        <button onclick="refreshPopup()">Refresh</button>
+        <!-- <button onclick="refreshPopup()">Refresh</button> -->
       </div>
   
       <div id="background"></div>
